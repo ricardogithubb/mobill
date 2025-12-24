@@ -135,6 +135,17 @@
             color: white;
         }
         
+        /* Centralizar todos os modais */
+        .modal-dialog-centered-custom {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - 1rem);
+        }
+        
+        .modal-dialog-centered-custom .modal-content {
+            margin: auto;
+        }
+        
         .modal-content {
             border-radius: var(--border-radius);
             border: none;
@@ -221,6 +232,51 @@
             opacity: 0.5;
         }
         
+        /* Controle de navegação de mês */
+        .month-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .month-navigation-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+        
+        .month-navigation-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .month-display {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .current-month-badge {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        
         /* Barra de navegação fixa no rodapé */
         .bottom-nav {
             position: fixed;
@@ -286,6 +342,34 @@
             justify-content: flex-end;
         }
         
+        /* Indicador de carregamento */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
             .balance-card h2 {
                 font-size: 2rem;
@@ -313,6 +397,19 @@
             
             .nav-link i {
                 font-size: 1rem;
+            }
+            
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .month-display {
+                min-width: 150px;
+                font-size: 1rem;
+            }
+            
+            .month-navigation {
+                gap: 10px;
             }
         }
     </style>
@@ -346,20 +443,42 @@
     <div class="container app-container mt-4">
         <!-- Dashboard Principal -->
         <div id="dashboard">
+            <!-- Navegação de Mês -->
+            <div class="dashboard-card mb-4">
+                <div class="month-navigation">
+                    <button class="month-navigation-btn" id="prev-month-btn" title="Mês anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="month-display" id="current-month-display">
+                        Carregando...
+                    </div>
+                    <button class="month-navigation-btn" id="next-month-btn" title="Próximo mês">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="text-center d-none">
+                    <button class="btn btn-sm btn-outline-primary" id="go-to-current-month">
+                        <i class="bi bi-calendar-check me-1"></i>Voltar para mês atual
+                    </button>
+                </div>
+            </div>
+            
             <div class="row mb-4">
                 <div class="col-lg-8">
                     <div class="dashboard-card balance-card">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <p class="mb-1">Saldo Total</p>
-                                <h2 id="total-balance">R$ 4.250,80</h2>
-                                <p class="mb-0"><i class="bi bi-arrow-up-circle me-1"></i> R$ 320,50 este mês</p>
+                                <h2 id="total-balance">R$ 0,00</h2>
+                                <p class="mb-0" id="monthly-balance-change">
+                                    <i class="bi bi-dash-circle me-1"></i> Carregando...
+                                </p>
                             </div>
                             <div class="text-end">
-                                <p class="mb-1">Receitas deste mês</p>
-                                <h4>R$ 3.580,00</h4>
-                                <p class="mb-1">Despesas deste mês</p>
-                                <h4>R$ 1.329,20</h4>
+                                <p class="mb-1">Receitas do mês</p>
+                                <h4 id="monthly-income">R$ 0,00</h4>
+                                <p class="mb-1">Despesas do mês</p>
+                                <h4 id="monthly-expense">R$ 0,00</h4>
                             </div>
                         </div>
                     </div>
@@ -368,15 +487,15 @@
                     <div class="dashboard-card">
                         <h5 class="mb-3">Meta Mensal</h5>
                         <div class="mb-3">
-                            <p class="mb-1">Economia: <strong>R$ 850,00 / R$ 1.000,00</strong></p>
+                            <p class="mb-1">Economia: <strong id="savings-progress">R$ 0,00 / R$ 0,00</strong></p>
                             <div class="progress progress-bar-custom">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+                                <div class="progress-bar bg-success" id="savings-bar" role="progressbar" style="width: 0%"></div>
                             </div>
                         </div>
                         <div>
-                            <p class="mb-1">Gasto com alimentação: <strong>R$ 420,00 / R$ 500,00</strong></p>
+                            <p class="mb-1">Gasto com alimentação: <strong id="food-progress">R$ 0,00 / R$ 0,00</strong></p>
                             <div class="progress progress-bar-custom">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: 84%"></div>
+                                <div class="progress-bar bg-warning" id="food-bar" role="progressbar" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -386,28 +505,28 @@
             <div class="row mb-4">
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="dashboard-card stat-card">
-                        <div class="stat-value">R$ 3.580</div>
+                        <div class="stat-value" id="stat-income">R$ 0</div>
                         <div class="stat-label">Receitas</div>
                         <div class="mt-2"><i class="bi bi-arrow-up-circle text-success fs-4"></i></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="dashboard-card stat-card">
-                        <div class="stat-value">R$ 1.329</div>
+                        <div class="stat-value" id="stat-expense">R$ 0</div>
                         <div class="stat-label">Despesas</div>
                         <div class="mt-2"><i class="bi bi-arrow-down-circle text-danger fs-4"></i></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="dashboard-card stat-card">
-                        <div class="stat-value">R$ 850</div>
+                        <div class="stat-value" id="stat-savings">R$ 0</div>
                         <div class="stat-label">Economias</div>
                         <div class="mt-2"><i class="bi bi-piggy-bank text-primary fs-4"></i></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="dashboard-card stat-card">
-                        <div class="stat-value" id="transaction-count">14</div>
+                        <div class="stat-value" id="transaction-count">0</div>
                         <div class="stat-label">Transações</div>
                         <div class="mt-2"><i class="bi bi-receipt text-warning fs-4"></i></div>
                     </div>
@@ -418,7 +537,7 @@
                 <div class="col-lg-8 mb-4">
                     <div class="dashboard-card">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5>Transações Recentes</h5>
+                            <h5>Transações do Mês</h5>
                             <div>
                                 <span class="badge bg-light text-dark filter-badge me-2" data-filter="all">Todas</span>
                                 <span class="badge bg-success filter-badge me-2" data-filter="income">Receitas</span>
@@ -427,7 +546,10 @@
                         </div>
                         
                         <div id="transactions-list">
-                            <!-- Transações serão carregadas via JavaScript -->
+                            <div class="empty-state">
+                                <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+                                <p class="mt-2">Carregando transações...</p>
+                            </div>
                         </div>
                         
                         <div class="text-center mt-3">
@@ -442,14 +564,20 @@
                     <div class="dashboard-card mb-4">
                         <h5 class="mb-3">Categorias de Despesas</h5>
                         <div id="expense-categories">
-                            <!-- Categorias serão carregadas via JavaScript -->
+                            <div class="empty-state">
+                                <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+                                <p class="mt-2">Carregando categorias...</p>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="dashboard-card">
                         <h5 class="mb-3">Próximas Contas</h5>
                         <div id="upcoming-bills">
-                            <!-- Contas serão carregadas via JavaScript -->
+                            <div class="empty-state">
+                                <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+                                <p class="mt-2">Carregando contas...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -458,9 +586,29 @@
 
         <!-- Seção de Transações -->
         <div id="transactions" class="d-none">
+            <!-- Navegação de Mês -->
+            <div class="dashboard-card mb-4">
+                <div class="month-navigation">
+                    <button class="month-navigation-btn" id="prev-month-btn-transactions" title="Mês anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="month-display" id="current-month-display-transactions">
+                        Carregando...
+                    </div>
+                    <button class="month-navigation-btn" id="next-month-btn-transactions" title="Próximo mês">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-sm btn-outline-primary" id="go-to-current-month-transactions">
+                        <i class="bi bi-calendar-check me-1"></i>Voltar para mês atual
+                    </button>
+                </div>
+            </div>
+            
             <div class="dashboard-card">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4>Todas as Transações</h4>
+                    <h4>Transações do Mês</h4>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
                         <i class="bi bi-plus-lg me-1"></i>Nova Transação
                     </button>
@@ -505,13 +653,36 @@
                 </div>
                 
                 <div id="all-transactions-list">
-                    <!-- Todas as transações serão carregadas via JavaScript -->
+                    <div class="empty-state">
+                        <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+                        <p class="mt-2">Carregando transações...</p>
+                    </div>
                 </div>
             </div>
         </div>
         
         <!-- Seção de Orçamento -->
         <div id="budget" class="d-none">
+            <!-- Navegação de Mês -->
+            <div class="dashboard-card mb-4">
+                <div class="month-navigation">
+                    <button class="month-navigation-btn" id="prev-month-btn-budget" title="Mês anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="month-display" id="current-month-display-budget">
+                        Carregando...
+                    </div>
+                    <button class="month-navigation-btn" id="next-month-btn-budget" title="Próximo mês">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-sm btn-outline-primary" id="go-to-current-month-budget">
+                        <i class="bi bi-calendar-check me-1"></i>Voltar para mês atual
+                    </button>
+                </div>
+            </div>
+            
             <div class="dashboard-card">
                 <h4 class="mb-4">Meu Orçamento</h4>
                 
@@ -519,7 +690,10 @@
                     <div class="col-md-8">
                         <h5>Orçamento por Categoria</h5>
                         <div id="budget-categories">
-                            <!-- Orçamentos por categoria serão carregados via JavaScript -->
+                            <div class="empty-state">
+                                <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+                                <p class="mt-2">Carregando orçamentos...</p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -559,13 +733,19 @@
                     <div class="col-md-6">
                         <h5>Categorias de Receitas</h5>
                         <div id="income-categories-list" class="mb-4">
-                            <!-- Categorias de receitas serão carregadas via JavaScript -->
+                            <div class="empty-state">
+                                <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+                                <p class="mt-2">Carregando categorias...</p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <h5>Categorias de Despesas</h5>
                         <div id="expense-categories-list" class="mb-4">
-                            <!-- Categorias de despesas serão carregadas via JavaScript -->
+                            <div class="empty-state">
+                                <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+                                <p class="mt-2">Carregando categorias...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -574,6 +754,26 @@
         
         <!-- Seção de Relatórios -->
         <div id="reports" class="d-none">
+            <!-- Navegação de Mês -->
+            <div class="dashboard-card mb-4">
+                <div class="month-navigation">
+                    <button class="month-navigation-btn" id="prev-month-btn-reports" title="Mês anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="month-display" id="current-month-display-reports">
+                        Carregando...
+                    </div>
+                    <button class="month-navigation-btn" id="next-month-btn-reports" title="Próximo mês">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-sm btn-outline-primary" id="go-to-current-month-reports">
+                        <i class="bi bi-calendar-check me-1"></i>Voltar para mês atual
+                    </button>
+                </div>
+            </div>
+            
             <div class="dashboard-card">
                 <h4 class="mb-4">Relatórios Financeiros</h4>
                 
@@ -586,6 +786,7 @@
                                 <option value="last-month">Mês Anterior</option>
                                 <option value="last-3-months">Últimos 3 Meses</option>
                                 <option value="current-year">Este Ano</option>
+                                <option value="selected-month">Mês Selecionado</option>
                             </select>
                         </div>
                     </div>
@@ -677,9 +878,14 @@
         </div>
     </nav>
 
-    <!-- Modal para Adicionar Transação -->
+    <!-- Indicador de Carregamento -->
+    <div id="loadingOverlay" class="loading-overlay d-none">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Modal para Adicionar Transação (Centralizado) -->
     <div class="modal fade" id="addTransactionModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-centered-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Adicionar Transação</h5>
@@ -763,9 +969,9 @@
         </div>
     </div>
 
-    <!-- Modal para Adicionar Categoria -->
+    <!-- Modal para Adicionar Categoria (Centralizado) -->
     <div class="modal fade" id="addCategoryModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-centered-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Adicionar Nova Categoria</h5>
@@ -824,9 +1030,9 @@
         </div>
     </div>
 
-    <!-- Modal para Editar Categoria -->
+    <!-- Modal para Editar Categoria (Centralizado) -->
     <div class="modal fade" id="editCategoryModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-centered-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Editar Categoria</h5>
@@ -887,9 +1093,9 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmação (para substituir alert) -->
+    <!-- Modal de Confirmação (Centralizado) -->
     <div class="modal fade" id="confirmationModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-centered-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="confirmationModalTitle">Confirmação</h5>
@@ -906,11 +1112,11 @@
         </div>
     </div>
 
-    <!-- Modal de Notificação (para substituir alert de sucesso/info) -->
+    <!-- Modal de Notificação (Centralizado) -->
     <div class="modal fade" id="notificationModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-centered-custom">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" id="notificationModalHeader">
                     <h5 class="modal-title" id="notificationModalTitle">Notificação</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -928,46 +1134,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Dados iniciais do aplicativo
-        let transactions = JSON.parse(localStorage.getItem('financaspro_transactions')) || [
-            { id: 1, type: 'income', description: 'Salário', amount: 2500.00, category: 'Salário', date: '2023-10-05', notes: '', recurring: false, originalTransactionId: null },
-            { id: 2, type: 'expense', description: 'Supermercado', amount: 320.50, category: 'Alimentação', date: '2023-10-07', notes: 'Compra do mês', recurring: false, originalTransactionId: null },
-            { id: 3, type: 'expense', description: 'Gasolina', amount: 180.00, category: 'Transporte', date: '2023-10-08', notes: 'Posto Shell', recurring: false, originalTransactionId: null },
-            { id: 4, type: 'expense', description: 'Academia', amount: 89.90, category: 'Saúde', date: '2023-10-10', notes: 'Mensalidade', recurring: true, originalTransactionId: 4 },
-            { id: 5, type: 'income', description: 'Freelance', amount: 800.00, category: 'Freelance', date: '2023-10-12', notes: 'Desenvolvimento de site', recurring: false, originalTransactionId: null },
-            { id: 6, type: 'expense', description: 'Restaurante', amount: 75.30, category: 'Alimentação', date: '2023-10-12', notes: 'Jantar com amigos', recurring: false, originalTransactionId: null },
-            { id: 7, type: 'expense', description: 'Netflix', amount: 32.90, category: 'Lazer', date: '2023-10-15', notes: 'Assinatura mensal', recurring: true, originalTransactionId: 7 },
-            { id: 8, type: 'expense', description: 'Aluguel', amount: 950.00, category: 'Moradia', date: '2023-10-05', notes: '', recurring: true, originalTransactionId: 8 },
-            { id: 9, type: 'expense', description: 'Livros', amount: 120.00, category: 'Educação', date: '2023-10-18', notes: '2 livros técnicos', recurring: false, originalTransactionId: null },
-            { id: 10, type: 'income', description: 'Dividendos', amount: 280.00, category: 'Investimentos', date: '2023-10-20', notes: 'Ações', recurring: false, originalTransactionId: null }
-        ];
+        // Configuração do IndexedDB
+        const DB_NAME = 'FinancasProDB';
+        const DB_VERSION = 1;
+        let db = null;
 
-        let categories = JSON.parse(localStorage.getItem('financaspro_categories')) || [
-            { id: 1, name: 'Salário', type: 'income', color: '#4cc9f0', icon: 'bi-cash' },
-            { id: 2, name: 'Freelance', type: 'income', color: '#3f37c9', icon: 'bi-laptop' },
-            { id: 3, name: 'Investimentos', type: 'income', color: '#4361ee', icon: 'bi-graph-up' },
-            { id: 4, name: 'Alimentação', type: 'expense', color: '#f72585', icon: 'bi-cart' },
-            { id: 5, name: 'Transporte', type: 'expense', color: '#ff9e00', icon: 'bi-car-front' },
-            { id: 6, name: 'Moradia', type: 'expense', color: '#7209b7', icon: 'bi-house' },
-            { id: 7, name: 'Lazer', type: 'expense', color: '#4cc9f0', icon: 'bi-cup-straw' },
-            { id: 8, name: 'Saúde', type: 'expense', color: '#f72585', icon: 'bi-heart' },
-            { id: 9, name: 'Educação', type: 'expense', color: '#3f37c9', icon: 'bi-book' }
-        ];
+        // Nomes das stores (tabelas)
+        const STORES = {
+            TRANSACTIONS: 'transactions',
+            CATEGORIES: 'categories',
+            BUDGETS: 'budgets',
+            UPCOMING_BILLS: 'upcomingBills'
+        };
 
-        let budgets = JSON.parse(localStorage.getItem('financaspro_budgets')) || [
-            { category: 'Alimentação', budget: 500.00, spent: 420.00 },
-            { category: 'Transporte', budget: 300.00, spent: 180.00 },
-            { category: 'Moradia', budget: 1000.00, spent: 950.00 },
-            { category: 'Lazer', budget: 200.00, spent: 107.90 },
-            { category: 'Saúde', budget: 150.00, spent: 89.90 },
-            { category: 'Educação', budget: 100.00, spent: 120.00 }
-        ];
-
-        let upcomingBills = JSON.parse(localStorage.getItem('financaspro_upcomingBills')) || [
-            { description: 'Conta de Luz', amount: 120.00, dueDate: '2023-10-25', category: 'Moradia' },
-            { description: 'Internet', amount: 89.90, dueDate: '2023-10-28', category: 'Moradia' },
-            { description: 'Plano de Saúde', amount: 350.00, dueDate: '2023-11-05', category: 'Saúde' }
-        ];
+        // Dados em memória
+        let transactions = [];
+        let categories = [];
+        let budgets = [];
+        let upcomingBills = [];
 
         // Configurar data atual no campo de data
         document.getElementById('transaction-date').valueAsDate = new Date();
@@ -981,12 +1165,225 @@
         let currentCategoryId = null;
         let currentBudgetCategory = null;
 
-        // Funções de utilidade
-        function saveData() {
-            localStorage.setItem('financaspro_transactions', JSON.stringify(transactions));
-            localStorage.setItem('financaspro_categories', JSON.stringify(categories));
-            localStorage.setItem('financaspro_budgets', JSON.stringify(budgets));
-            localStorage.setItem('financaspro_upcomingBills', JSON.stringify(upcomingBills));
+        // Variável para controle do mês selecionado
+        let currentSelectedMonth = new Date().getMonth();
+        let currentSelectedYear = new Date().getFullYear();
+        let currentSelectedDate = new Date();
+
+        // ============= INDEXEDDB FUNCTIONS =============
+        
+        // Inicializar o banco de dados
+        function initDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = (event) => {
+                    console.error('Erro ao abrir o banco de dados:', event.target.error);
+                    reject(event.target.error);
+                };
+                
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    console.log('Banco de dados aberto com sucesso');
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Criar stores se não existirem
+                    if (!db.objectStoreNames.contains(STORES.TRANSACTIONS)) {
+                        const transactionStore = db.createObjectStore(STORES.TRANSACTIONS, { keyPath: 'id', autoIncrement: true });
+                        transactionStore.createIndex('type', 'type', { unique: false });
+                        transactionStore.createIndex('category', 'category', { unique: false });
+                        transactionStore.createIndex('date', 'date', { unique: false });
+                    }
+                    
+                    if (!db.objectStoreNames.contains(STORES.CATEGORIES)) {
+                        const categoryStore = db.createObjectStore(STORES.CATEGORIES, { keyPath: 'id', autoIncrement: true });
+                        categoryStore.createIndex('type', 'type', { unique: false });
+                        categoryStore.createIndex('name', 'name', { unique: true });
+                    }
+                    
+                    if (!db.objectStoreNames.contains(STORES.BUDGETS)) {
+                        const budgetStore = db.createObjectStore(STORES.BUDGETS, { keyPath: 'category' });
+                    }
+                    
+                    if (!db.objectStoreNames.contains(STORES.UPCOMING_BILLS)) {
+                        const upcomingBillsStore = db.createObjectStore(STORES.UPCOMING_BILLS, { keyPath: 'id', autoIncrement: true });
+                        upcomingBillsStore.createIndex('dueDate', 'dueDate', { unique: false });
+                    }
+                    
+                    console.log('Estrutura do banco de dados criada/atualizada');
+                };
+            });
+        }
+
+        // Carregar todos os dados do IndexedDB
+        async function loadAllData() {
+            try {
+                showLoading(true);
+                
+                // Carregar transações
+                transactions = await getAllFromStore(STORES.TRANSACTIONS);
+                
+                // Carregar categorias
+                categories = await getAllFromStore(STORES.CATEGORIES);
+                
+                // Se não houver categorias, adicionar as padrão
+                if (categories.length === 0) {
+                    await addDefaultCategories();
+                    categories = await getAllFromStore(STORES.CATEGORIES);
+                }
+                
+                // Carregar orçamentos
+                budgets = await getAllFromStore(STORES.BUDGETS);
+                
+                // Carregar contas próximas
+                upcomingBills = await getAllFromStore(STORES.UPCOMING_BILLS);
+                
+                console.log('Dados carregados com sucesso:', {
+                    transactions: transactions.length,
+                    categories: categories.length,
+                    budgets: budgets.length,
+                    upcomingBills: upcomingBills.length
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                showNotification('Erro', 'Não foi possível carregar os dados. Por favor, recarregue a página.', 'danger');
+                return false;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Obter todos os registros de uma store
+        function getAllFromStore(storeName) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Banco de dados não inicializado'));
+                    return;
+                }
+                
+                const transaction = db.transaction(storeName, 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+                
+                request.onsuccess = (event) => {
+                    resolve(event.target.result || []);
+                };
+                
+                request.onerror = (event) => {
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Adicionar um item a uma store
+        function addToStore(storeName, item) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Banco de dados não inicializado'));
+                    return;
+                }
+                
+                const transaction = db.transaction(storeName, 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.add(item);
+                
+                request.onsuccess = (event) => {
+                    // Se o store usar auto-increment, atualizar o ID do item
+                    if (store.keyPath === 'id' && item.id === undefined) {
+                        item.id = event.target.result;
+                    }
+                    resolve(item);
+                };
+                
+                request.onerror = (event) => {
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Atualizar um item em uma store
+        function updateInStore(storeName, item) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Banco de dados não inicializado'));
+                    return;
+                }
+                
+                const transaction = db.transaction(storeName, 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(item);
+                
+                request.onsuccess = () => {
+                    resolve(item);
+                };
+                
+                request.onerror = (event) => {
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Remover um item de uma store
+        function removeFromStore(storeName, id) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Banco de dados não inicializado'));
+                    return;
+                }
+                
+                const transaction = db.transaction(storeName, 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(id);
+                
+                request.onsuccess = () => {
+                    resolve(true);
+                };
+                
+                request.onerror = (event) => {
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Adicionar categorias padrão
+        async function addDefaultCategories() {
+            const defaultCategories = [
+                { id: 1, name: 'Salário', type: 'income', color: '#4cc9f0', icon: 'bi-cash' },
+                { id: 2, name: 'Freelance', type: 'income', color: '#3f37c9', icon: 'bi-laptop' },
+                { id: 3, name: 'Investimentos', type: 'income', color: '#4361ee', icon: 'bi-graph-up' },
+                { id: 4, name: 'Alimentação', type: 'expense', color: '#f72585', icon: 'bi-cart' },
+                { id: 5, name: 'Transporte', type: 'expense', color: '#ff9e00', icon: 'bi-car-front' },
+                { id: 6, name: 'Moradia', type: 'expense', color: '#7209b7', icon: 'bi-house' },
+                { id: 7, name: 'Lazer', type: 'expense', color: '#4cc9f0', icon: 'bi-cup-straw' },
+                { id: 8, name: 'Saúde', type: 'expense', color: '#f72585', icon: 'bi-heart' },
+                { id: 9, name: 'Educação', type: 'expense', color: '#3f37c9', icon: 'bi-book' }
+            ];
+            
+            for (const category of defaultCategories) {
+                try {
+                    await addToStore(STORES.CATEGORIES, category);
+                } catch (error) {
+                    console.error('Erro ao adicionar categoria padrão:', error);
+                }
+            }
+        }
+
+        // ============= UTILITY FUNCTIONS =============
+        
+        // Mostrar/ocultar indicador de carregamento
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.remove('d-none');
+            } else {
+                overlay.classList.add('d-none');
+            }
         }
 
         function formatCurrency(value) {
@@ -998,6 +1395,108 @@
             return date.toLocaleDateString('pt-BR');
         }
 
+        // Formatar mês e ano para exibição
+        function formatMonthYear(month, year) {
+            const date = new Date(year, month, 1);
+            return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        }
+
+        // Verificar se é o mês atual
+        function isCurrentMonth(month, year) {
+            const currentDate = new Date();
+            return month === currentDate.getMonth() && year === currentDate.getFullYear();
+        }
+
+        // Atualizar a exibição do mês atual
+        function updateMonthDisplay() {
+            const formattedMonth = formatMonthYear(currentSelectedMonth, currentSelectedYear);
+            const isCurrent = isCurrentMonth(currentSelectedMonth, currentSelectedYear);
+            
+            // Atualizar todos os displays de mês
+            document.querySelectorAll('.month-display').forEach(display => {
+                display.innerHTML = `
+                    ${formattedMonth.charAt(0).toUpperCase() + formattedMonth.slice(1)}
+                    ${isCurrent ? '<span class="current-month-badge">Mês Atual</span>' : ''}
+                `;
+            });
+        }
+
+        // Navegar para o mês anterior
+        function goToPreviousMonth() {
+            currentSelectedMonth--;
+            if (currentSelectedMonth < 0) {
+                currentSelectedMonth = 11;
+                currentSelectedYear--;
+            }
+            currentSelectedDate = new Date(currentSelectedYear, currentSelectedMonth, 1);
+            updateMonthDisplay();
+            refreshCurrentSection();
+        }
+
+        // Navegar para o próximo mês
+        function goToNextMonth() {
+            currentSelectedMonth++;
+            if (currentSelectedMonth > 11) {
+                currentSelectedMonth = 0;
+                currentSelectedYear++;
+            }
+            currentSelectedDate = new Date(currentSelectedYear, currentSelectedMonth, 1);
+            updateMonthDisplay();
+            refreshCurrentSection();
+        }
+
+        // Voltar para o mês atual
+        function goToCurrentMonth() {
+            const currentDate = new Date();
+            currentSelectedMonth = currentDate.getMonth();
+            currentSelectedYear = currentDate.getFullYear();
+            currentSelectedDate = new Date();
+            updateMonthDisplay();
+            refreshCurrentSection();
+        }
+
+        // Atualizar a seção atual
+        function refreshCurrentSection() {
+            const activeSection = document.querySelector('.bottom-nav .nav-link.active').getAttribute('data-section');
+            
+            if (activeSection === 'dashboard') {
+                updateDashboard();
+                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
+                renderExpenseCategories();
+            } else if (activeSection === 'transactions') {
+                renderTransactions(filterTransactionsByMonth('all'), 'all-transactions-list');
+            } else if (activeSection === 'budget') {
+                renderBudgets();
+            } else if (activeSection === 'reports') {
+                generateReport('selected-month', 'expenses');
+            }
+        }
+
+        // Calcular totais do mês selecionado
+        function calculateMonthlyTotals() {
+            let monthlyIncome = 0;
+            let monthlyExpense = 0;
+            
+            transactions.forEach(transaction => {
+                const transactionDate = new Date(transaction.date);
+                if (transactionDate.getMonth() === currentSelectedMonth && 
+                    transactionDate.getFullYear() === currentSelectedYear) {
+                    if (transaction.type === 'income') {
+                        monthlyIncome += transaction.amount;
+                    } else {
+                        monthlyExpense += transaction.amount;
+                    }
+                }
+            });
+            
+            return {
+                income: monthlyIncome,
+                expense: monthlyExpense,
+                balance: monthlyIncome - monthlyExpense
+            };
+        }
+
+        // Calcular totais gerais
         function calculateTotals() {
             let totalIncome = 0;
             let totalExpense = 0;
@@ -1017,10 +1516,6 @@
             };
         }
 
-        function getNextId(array) {
-            return array.length > 0 ? Math.max(...array.map(item => item.id)) + 1 : 1;
-        }
-
         // Mostrar modal de confirmação
         function showConfirmation(title, message, confirmCallback) {
             document.getElementById('confirmationModalTitle').textContent = title;
@@ -1037,7 +1532,7 @@
             document.getElementById('notificationModalBody').textContent = message;
             
             // Alterar cor do cabeçalho baseado no tipo
-            const modalHeader = document.querySelector('#notificationModal .modal-header');
+            const modalHeader = document.getElementById('notificationModalHeader');
             modalHeader.className = 'modal-header';
             
             if (type === 'success') {
@@ -1053,6 +1548,8 @@
             const modal = new bootstrap.Modal(document.getElementById('notificationModal'));
             modal.show();
         }
+
+        // ============= RENDER FUNCTIONS =============
 
         // Renderizar categorias nos selects
         function renderCategoryOptions() {
@@ -1106,6 +1603,68 @@
                     select.value = currentValue;
                 }
             });
+        }
+
+        // Filtrar transações por mês selecionado
+        function filterTransactionsByMonth(type = 'all', search = '', category = '') {
+            let filtered = transactions.filter(t => {
+                const transactionDate = new Date(t.date);
+                return transactionDate.getMonth() === currentSelectedMonth && 
+                       transactionDate.getFullYear() === currentSelectedYear;
+            });
+            
+            if (type !== 'all') {
+                filtered = filtered.filter(t => t.type === type);
+            }
+            
+            if (search) {
+                const searchLower = search.toLowerCase();
+                filtered = filtered.filter(t => 
+                    t.description.toLowerCase().includes(searchLower) || 
+                    t.category.toLowerCase().includes(searchLower) ||
+                    (t.notes && t.notes.toLowerCase().includes(searchLower))
+                );
+            }
+            
+            if (category) {
+                filtered = filtered.filter(t => t.category === category);
+            }
+            
+            // Ordenar por data (mais recente primeiro)
+            return filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        // Filtrar todas as transações (para seção de transações)
+        function filterAllTransactions(type = 'all', search = '', category = '', monthFilter = 'all') {
+            let filtered = transactions;
+            
+            if (type !== 'all') {
+                filtered = filtered.filter(t => t.type === type);
+            }
+            
+            if (search) {
+                const searchLower = search.toLowerCase();
+                filtered = filtered.filter(t => 
+                    t.description.toLowerCase().includes(searchLower) || 
+                    t.category.toLowerCase().includes(searchLower) ||
+                    (t.notes && t.notes.toLowerCase().includes(searchLower))
+                );
+            }
+            
+            if (category) {
+                filtered = filtered.filter(t => t.category === category);
+            }
+            
+            if (monthFilter !== 'all') {
+                const monthNum = parseInt(monthFilter);
+                filtered = filtered.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate.getMonth() === monthNum;
+                });
+            }
+            
+            // Ordenar por data (mais recente primeiro)
+            return filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
         }
 
         // Renderizar transações
@@ -1178,10 +1737,14 @@
             const container = document.getElementById('expense-categories');
             if (!container) return;
             
-            // Calcular totais por categoria
+            // Calcular totais por categoria do mês selecionado
             const categoryTotals = {};
             transactions.forEach(transaction => {
-                if (transaction.type === 'expense') {
+                const transactionDate = new Date(transaction.date);
+                if (transaction.type === 'expense' && 
+                    transactionDate.getMonth() === currentSelectedMonth && 
+                    transactionDate.getFullYear() === currentSelectedYear) {
+                    
                     if (!categoryTotals[transaction.category]) {
                         categoryTotals[transaction.category] = 0;
                     }
@@ -1210,6 +1773,10 @@
                         ` : ''}
                     </div>
                 `;
+            }
+            
+            if (html === '') {
+                html = '<div class="empty-state"><i class="bi bi-pie-chart"></i><p>Nenhuma despesa registrada neste mês.</p></div>';
             }
             
             container.innerHTML = html;
@@ -1313,24 +1880,39 @@
             if (!container) return;
             
             let html = '';
-            upcomingBills.forEach(bill => {
-                const daysUntilDue = Math.ceil((new Date(bill.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
-                const dueText = daysUntilDue === 0 ? 'Vence hoje' : daysUntilDue < 0 ? `Venceu há ${Math.abs(daysUntilDue)} dias` : `Vence em ${daysUntilDue} dias`;
-                const dueClass = daysUntilDue <= 3 ? 'text-danger' : daysUntilDue <= 7 ? 'text-warning' : 'text-muted';
-                
-                html += `
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                        <div>
-                            <h6 class="mb-1">${bill.description}</h6>
-                            <small class="${dueClass}">${dueText}</small>
+            
+            // Filtrar apenas contas futuras
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const futureBills = upcomingBills.filter(bill => {
+                const dueDate = new Date(bill.dueDate);
+                dueDate.setHours(0, 0, 0, 0);
+                return dueDate >= today;
+            }).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+            
+            if (futureBills.length === 0) {
+                html = '<div class="empty-state"><i class="bi bi-calendar-check"></i><p>Nenhuma conta a vencer.</p></div>';
+            } else {
+                futureBills.slice(0, 5).forEach(bill => {
+                    const daysUntilDue = Math.ceil((new Date(bill.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+                    const dueText = daysUntilDue === 0 ? 'Vence hoje' : daysUntilDue < 0 ? `Venceu há ${Math.abs(daysUntilDue)} dias` : `Vence em ${daysUntilDue} dias`;
+                    const dueClass = daysUntilDue <= 3 ? 'text-danger' : daysUntilDue <= 7 ? 'text-warning' : 'text-muted';
+                    
+                    html += `
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <div>
+                                <h6 class="mb-1">${bill.description}</h6>
+                                <small class="${dueClass}">${dueText}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">${formatCurrency(bill.amount)}</div>
+                                <small class="text-muted">${bill.category}</small>
+                            </div>
                         </div>
-                        <div class="text-end">
-                            <div class="fw-bold">${formatCurrency(bill.amount)}</div>
-                            <small class="text-muted">${bill.category}</small>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
             
             container.innerHTML = html;
         }
@@ -1341,40 +1923,56 @@
             if (!container) return;
             
             let html = '';
-            budgets.forEach(budget => {
-                const percentage = Math.min(100, (budget.spent / budget.budget) * 100);
-                const progressClass = percentage > 90 ? 'bg-danger' : percentage > 70 ? 'bg-warning' : 'bg-success';
-                const remaining = budget.budget - budget.spent;
-                
-                html += `
-                    <div class="dashboard-card mb-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <h6>${budget.category}</h6>
-                            <div>
-                                <button class="btn btn-sm btn-outline-danger btn-action delete-budget" data-category="${budget.category}" title="Remover orçamento">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+            
+            if (budgets.length === 0) {
+                html = '<div class="empty-state"><i class="bi bi-pie-chart"></i><p>Nenhum orçamento definido ainda.</p></div>';
+            } else {
+                budgets.forEach(budget => {
+                    // Calcular gastos do mês selecionado para esta categoria
+                    const spentThisMonth = transactions
+                        .filter(t => {
+                            const transactionDate = new Date(t.date);
+                            return t.type === 'expense' && 
+                                   t.category === budget.category &&
+                                   transactionDate.getMonth() === currentSelectedMonth &&
+                                   transactionDate.getFullYear() === currentSelectedYear;
+                        })
+                        .reduce((sum, t) => sum + t.amount, 0);
+                    
+                    const percentage = Math.min(100, (spentThisMonth / budget.budget) * 100);
+                    const progressClass = percentage > 90 ? 'bg-danger' : percentage > 70 ? 'bg-warning' : 'bg-success';
+                    const remaining = budget.budget - spentThisMonth;
+                    
+                    html += `
+                        <div class="dashboard-card mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6>${budget.category}</h6>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-danger btn-action delete-budget" data-category="${budget.category}" title="Remover orçamento">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <div>
+                                    <span class="text-muted">Gasto: </span>
+                                    <strong>${formatCurrency(spentThisMonth)}</strong>
+                                    <span class="text-muted"> de ${formatCurrency(budget.budget)}</span>
+                                </div>
+                            </div>
+                            <div class="progress progress-bar-custom mb-2">
+                                <div class="progress-bar ${progressClass}" role="progressbar" style="width: ${percentage}%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">${percentage.toFixed(1)}% do orçamento</small>
+                                <small class="${remaining >= 0 ? 'text-success' : 'text-danger'}">
+                                    ${remaining >= 0 ? 'Restante: ' : 'Excedido: '} ${formatCurrency(Math.abs(remaining))}
+                                </small>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <div>
-                                <span class="text-muted">Gasto: </span>
-                                <strong>${formatCurrency(budget.spent)}</strong>
-                                <span class="text-muted"> de ${formatCurrency(budget.budget)}</span>
-                            </div>
-                        </div>
-                        <div class="progress progress-bar-custom mb-2">
-                            <div class="progress-bar ${progressClass}" role="progressbar" style="width: ${percentage}%"></div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <small class="text-muted">${percentage.toFixed(1)}% do orçamento</small>
-                            <small class="${remaining >= 0 ? 'text-success' : 'text-danger'}">
-                                ${remaining >= 0 ? 'Restante: ' : 'Excedido: '} ${formatCurrency(Math.abs(remaining))}
-                            </small>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
             
             container.innerHTML = html;
             
@@ -1391,58 +1989,89 @@
             });
         }
 
-        // Atualizar totais
-        function updateTotals() {
+        // Atualizar dashboard
+        function updateDashboard() {
             const totals = calculateTotals();
+            const monthlyTotals = calculateMonthlyTotals();
+            
+            // Atualizar saldo total
             document.getElementById('total-balance').textContent = formatCurrency(totals.balance);
             
-            // Atualizar os cartões de estatísticas
-            const statValues = document.querySelectorAll('.stat-card .stat-value');
-            if (statValues.length >= 4) {
-                statValues[0].textContent = formatCurrency(totals.income);
-                statValues[1].textContent = formatCurrency(totals.expense);
-                statValues[2].textContent = formatCurrency(totals.balance - totals.expense);
-                statValues[3].textContent = transactions.length;
+            // Atualizar mudança mensal
+            const monthlyChangeElement = document.getElementById('monthly-balance-change');
+            if (monthlyTotals.balance > 0) {
+                monthlyChangeElement.innerHTML = `<i class="bi bi-arrow-up-circle me-1"></i> ${formatCurrency(monthlyTotals.balance)} este mês`;
+                monthlyChangeElement.className = 'mb-0 text-success';
+            } else if (monthlyTotals.balance < 0) {
+                monthlyChangeElement.innerHTML = `<i class="bi bi-arrow-down-circle me-1"></i> ${formatCurrency(Math.abs(monthlyTotals.balance))} este mês`;
+                monthlyChangeElement.className = 'mb-0 text-danger';
+            } else {
+                monthlyChangeElement.innerHTML = `<i class="bi bi-dash-circle me-1"></i> R$ 0,00 este mês`;
+                monthlyChangeElement.className = 'mb-0 text-muted';
             }
             
-            // Atualizar contador de transações
-            document.getElementById('transaction-count').textContent = transactions.length;
+            // Atualizar receitas e despesas do mês
+            document.getElementById('monthly-income').textContent = formatCurrency(monthlyTotals.income);
+            document.getElementById('monthly-expense').textContent = formatCurrency(monthlyTotals.expense);
+            
+            // Atualizar metas
+            updateGoals();
+            
+            // Atualizar os cartões de estatísticas do mês
+            document.getElementById('stat-income').textContent = formatCurrency(monthlyTotals.income);
+            document.getElementById('stat-expense').textContent = formatCurrency(monthlyTotals.expense);
+            document.getElementById('stat-savings').textContent = formatCurrency(monthlyTotals.balance);
+            
+            // Atualizar contador de transações do mês
+            const monthlyTransactions = transactions.filter(t => {
+                const transactionDate = new Date(t.date);
+                return transactionDate.getMonth() === currentSelectedMonth && 
+                       transactionDate.getFullYear() === currentSelectedYear;
+            });
+            document.getElementById('transaction-count').textContent = monthlyTransactions.length;
         }
 
-        // Filtrar transações
-        function filterTransactions(type = 'all', search = '', category = '', month = 'all') {
-            let filtered = transactions;
+        // Atualizar metas
+        function updateGoals() {
+            // Meta de economia (exemplo: 20% da renda mensal)
+            const monthlyTotals = calculateMonthlyTotals();
+            const savingsGoal = monthlyTotals.income * 0.2; // 20% da renda
+            const currentSavings = Math.max(0, monthlyTotals.balance);
+            const savingsPercentage = savingsGoal > 0 ? Math.min(100, (currentSavings / savingsGoal) * 100) : 0;
             
-            if (type !== 'all') {
-                filtered = filtered.filter(t => t.type === type);
+            document.getElementById('savings-progress').textContent = 
+                `${formatCurrency(currentSavings)} / ${formatCurrency(savingsGoal)}`;
+            document.getElementById('savings-bar').style.width = `${savingsPercentage}%`;
+            
+            // Meta de alimentação
+            const foodBudget = budgets.find(b => b.category === 'Alimentação');
+            if (foodBudget) {
+                // Calcular gastos com alimentação no mês selecionado
+                const foodSpent = transactions
+                    .filter(t => {
+                        const transactionDate = new Date(t.date);
+                        return t.type === 'expense' && 
+                               t.category === 'Alimentação' &&
+                               transactionDate.getMonth() === currentSelectedMonth &&
+                               transactionDate.getFullYear() === currentSelectedYear;
+                    })
+                    .reduce((sum, t) => sum + t.amount, 0);
+                
+                const foodPercentage = Math.min(100, (foodSpent / foodBudget.budget) * 100);
+                
+                document.getElementById('food-progress').textContent = 
+                    `${formatCurrency(foodSpent)} / ${formatCurrency(foodBudget.budget)}`;
+                document.getElementById('food-bar').style.width = `${foodPercentage}%`;
+            } else {
+                document.getElementById('food-progress').textContent = 'R$ 0,00 / R$ 0,00';
+                document.getElementById('food-bar').style.width = '0%';
             }
-            
-            if (search) {
-                const searchLower = search.toLowerCase();
-                filtered = filtered.filter(t => 
-                    t.description.toLowerCase().includes(searchLower) || 
-                    t.category.toLowerCase().includes(searchLower) ||
-                    (t.notes && t.notes.toLowerCase().includes(searchLower))
-                );
-            }
-            
-            if (category) {
-                filtered = filtered.filter(t => t.category === category);
-            }
-            
-            if (month !== 'all') {
-                const monthNum = parseInt(month);
-                filtered = filtered.filter(t => {
-                    const transactionDate = new Date(t.date);
-                    return transactionDate.getMonth() === monthNum;
-                });
-            }
-            
-            return filtered;
         }
+
+        // ============= CRUD OPERATIONS =============
 
         // Adicionar transação
-        function addTransaction(transactionData) {
+        async function addTransaction(transactionData) {
             const {
                 type,
                 description,
@@ -1455,216 +2084,261 @@
                 times
             } = transactionData;
             
-            const newTransactions = [];
-            
-            // Verificar se é uma transação recorrente
-            if (recurring && times > 1) {
-                for (let i = 0; i < times; i++) {
-                    const transactionDate = new Date(date);
-                    transactionDate.setMonth(transactionDate.getMonth() + (i * frequency));
-                    
+            try {
+                showLoading(true);
+                
+                const newTransactions = [];
+                
+                // Verificar se é uma transação recorrente
+                if (recurring && times > 1) {
+                    for (let i = 0; i < times; i++) {
+                        const transactionDate = new Date(date);
+                        transactionDate.setMonth(transactionDate.getMonth() + (i * frequency));
+                        
+                        const newTransaction = {
+                            type,
+                            description,
+                            amount,
+                            category,
+                            date: transactionDate.toISOString().split('T')[0],
+                            notes: notes || '',
+                            recurring: true,
+                            originalTransactionId: i === 0 ? null : undefined
+                        };
+                        
+                        // Adicionar ao IndexedDB
+                        const savedTransaction = await addToStore(STORES.TRANSACTIONS, newTransaction);
+                        newTransactions.push(savedTransaction);
+                        
+                        // Adicionar à lista de contas próximas se for uma despesa recorrente
+                        if (type === 'expense') {
+                            const dueDate = new Date(transactionDate);
+                            dueDate.setMonth(dueDate.getMonth() + 1); // Próximo mês
+                            
+                            await addToStore(STORES.UPCOMING_BILLS, {
+                                description,
+                                amount,
+                                dueDate: dueDate.toISOString().split('T')[0],
+                                category
+                            });
+                        }
+                    }
+                } else {
                     const newTransaction = {
-                        id: getNextId(transactions) + i,
                         type,
                         description,
                         amount,
                         category,
-                        date: transactionDate.toISOString().split('T')[0],
+                        date,
                         notes: notes || '',
-                        recurring: true,
-                        originalTransactionId: i === 0 ? getNextId(transactions) : null
+                        recurring: recurring || false,
+                        originalTransactionId: null
                     };
                     
-                    newTransactions.push(newTransaction);
-                }
-            } else {
-                const newTransaction = {
-                    id: getNextId(transactions),
-                    type,
-                    description,
-                    amount,
-                    category,
-                    date,
-                    notes: notes || '',
-                    recurring: recurring || false,
-                    originalTransactionId: null
-                };
-                
-                newTransactions.push(newTransaction);
-            }
-            
-            // Adicionar todas as transações
-            newTransactions.forEach(transaction => {
-                transactions.unshift(transaction);
-                
-                // Atualizar orçamento se for uma despesa
-                if (transaction.type === 'expense') {
-                    const budgetIndex = budgets.findIndex(b => b.category === transaction.category);
-                    if (budgetIndex !== -1) {
-                        budgets[budgetIndex].spent += transaction.amount;
+                    // Adicionar ao IndexedDB
+                    const savedTransaction = await addToStore(STORES.TRANSACTIONS, newTransaction);
+                    newTransactions.push(savedTransaction);
+                    
+                    // Adicionar à lista de contas próximas se for uma despesa recorrente
+                    if (recurring && type === 'expense') {
+                        const dueDate = new Date(date);
+                        dueDate.setMonth(dueDate.getMonth() + 1); // Próximo mês
+                        
+                        await addToStore(STORES.UPCOMING_BILLS, {
+                            description,
+                            amount,
+                            dueDate: dueDate.toISOString().split('T')[0],
+                            category
+                        });
                     }
                 }
                 
-                // Adicionar à lista de contas próximas se for uma despesa recorrente
-                if (transaction.recurring && transaction.type === 'expense') {
-                    const dueDate = new Date(transaction.date);
-                    dueDate.setMonth(dueDate.getMonth() + 1); // Próximo mês
-                    
-                    upcomingBills.push({
-                        description: transaction.description,
-                        amount: transaction.amount,
-                        dueDate: dueDate.toISOString().split('T')[0],
-                        category: transaction.category
-                    });
-                }
-            });
-            
-            // Salvar dados
-            saveData();
-            
-            // Atualizar a interface
-            updateTotals();
-            renderTransactions(filterTransactions('all', '', ''), 'transactions-list', 5);
-            renderTransactions(filterTransactions('all', '', ''), 'all-transactions-list');
-            renderExpenseCategories();
-            renderBudgets();
-            renderUpcomingBills();
-            
-            // Fechar modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addTransactionModal'));
-            if (modal) modal.hide();
-            
-            // Resetar formulário
-            document.getElementById('transaction-form').reset();
-            document.getElementById('transaction-date').valueAsDate = new Date();
-            document.getElementById('type-income').checked = true;
-            document.getElementById('transaction-recurring').checked = false;
-            document.getElementById('recurring-options').style.display = 'none';
-            
-            // Mostrar mensagem de sucesso
-            const message = newTransactions.length > 1 
-                ? `${newTransactions.length} transações recorrentes adicionadas com sucesso!` 
-                : 'Transação adicionada com sucesso!';
-            showNotification('Sucesso', message, 'success');
+                // Atualizar dados em memória
+                await loadAllData();
+                
+                // Atualizar a interface
+                updateDashboard();
+                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
+                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString()), 'all-transactions-list');
+                renderExpenseCategories();
+                renderBudgets();
+                renderUpcomingBills();
+                
+                // Fechar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addTransactionModal'));
+                if (modal) modal.hide();
+                
+                // Resetar formulário
+                document.getElementById('transaction-form').reset();
+                document.getElementById('transaction-date').valueAsDate = new Date();
+                document.getElementById('type-income').checked = true;
+                document.getElementById('transaction-recurring').checked = false;
+                document.getElementById('recurring-options').style.display = 'none';
+                
+                // Mostrar mensagem de sucesso
+                const message = newTransactions.length > 1 
+                    ? `${newTransactions.length} transações recorrentes adicionadas com sucesso!` 
+                    : 'Transação adicionada com sucesso!';
+                showNotification('Sucesso', message, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao adicionar transação:', error);
+                showNotification('Erro', 'Não foi possível adicionar a transação. Por favor, tente novamente.', 'danger');
+            } finally {
+                showLoading(false);
+            }
         }
 
         // Excluir transação
-        function deleteTransaction() {
+        async function deleteTransaction() {
             const transactionId = currentTransactionId;
-            const transactionIndex = transactions.findIndex(t => t.id === transactionId);
-            if (transactionIndex === -1) return;
             
-            const transaction = transactions[transactionIndex];
-            
-            // Remover transação
-            transactions.splice(transactionIndex, 1);
-            
-            // Atualizar orçamento se for uma despesa
-            if (transaction.type === 'expense') {
-                const budgetIndex = budgets.findIndex(b => b.category === transaction.category);
-                if (budgetIndex !== -1) {
-                    budgets[budgetIndex].spent -= transaction.amount;
-                    if (budgets[budgetIndex].spent < 0) budgets[budgetIndex].spent = 0;
+            try {
+                showLoading(true);
+                
+                // Encontrar transação
+                const transaction = transactions.find(t => t.id === transactionId);
+                if (!transaction) {
+                    showNotification('Erro', 'Transação não encontrada.', 'danger');
+                    return;
                 }
+                
+                // Remover do IndexedDB
+                await removeFromStore(STORES.TRANSACTIONS, transactionId);
+                
+                // Atualizar dados em memória
+                await loadAllData();
+                
+                // Atualizar a interface
+                updateDashboard();
+                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
+                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString()), 'all-transactions-list');
+                renderExpenseCategories();
+                renderBudgets();
+                renderUpcomingBills();
+                
+                showNotification('Sucesso', 'Transação excluída com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao excluir transação:', error);
+                showNotification('Erro', 'Não foi possível excluir a transação. Por favor, tente novamente.', 'danger');
+            } finally {
+                showLoading(false);
             }
-            
-            // Salvar dados
-            saveData();
-            
-            // Atualizar a interface
-            updateTotals();
-            renderTransactions(filterTransactions('all', '', ''), 'transactions-list', 5);
-            renderTransactions(filterTransactions('all', '', ''), 'all-transactions-list');
-            renderExpenseCategories();
-            renderBudgets();
-            
-            showNotification('Sucesso', 'Transação excluída com sucesso!', 'success');
         }
 
         // Adicionar orçamento
-        function addBudget(category, amount) {
-            // Verificar se já existe orçamento para esta categoria
-            const existingIndex = budgets.findIndex(b => b.category === category);
-            
-            if (existingIndex !== -1) {
-                // Atualizar orçamento existente
-                budgets[existingIndex].budget = amount;
-            } else {
-                // Adicionar novo orçamento
-                budgets.push({
+        async function addBudget(category, amount) {
+            try {
+                showLoading(true);
+                
+                // Verificar se já existe orçamento para esta categoria
+                const existingIndex = budgets.findIndex(b => b.category === category);
+                
+                const budgetData = {
                     category,
                     budget: amount,
-                    spent: 0
-                });
+                    spent: existingIndex !== -1 ? budgets[existingIndex].spent : 0
+                };
+                
+                // Salvar no IndexedDB
+                await updateInStore(STORES.BUDGETS, budgetData);
+                
+                // Atualizar dados em memória
+                await loadAllData();
+                
+                renderBudgets();
+                renderExpenseCategories();
+                updateDashboard();
+                
+                // Resetar formulário
+                document.getElementById('budget-form').reset();
+                
+                showNotification('Sucesso', 'Orçamento salvo com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao salvar orçamento:', error);
+                showNotification('Erro', 'Não foi possível salvar o orçamento. Por favor, tente novamente.', 'danger');
+            } finally {
+                showLoading(false);
             }
-            
-            // Salvar dados
-            saveData();
-            
-            renderBudgets();
-            renderExpenseCategories();
-            
-            // Resetar formulário
-            document.getElementById('budget-form').reset();
-            
-            showNotification('Sucesso', 'Orçamento salvo com sucesso!', 'success');
         }
 
         // Excluir orçamento
-        function deleteBudget() {
+        async function deleteBudget() {
             const category = currentBudgetCategory;
-            const budgetIndex = budgets.findIndex(b => b.category === category);
-            if (budgetIndex === -1) return;
             
-            budgets.splice(budgetIndex, 1);
-            
-            // Salvar dados
-            saveData();
-            
-            renderBudgets();
-            renderExpenseCategories();
-            
-            showNotification('Sucesso', 'Orçamento removido com sucesso!', 'success');
+            try {
+                showLoading(true);
+                
+                // Remover do IndexedDB
+                await removeFromStore(STORES.BUDGETS, category);
+                
+                // Atualizar dados em memória
+                await loadAllData();
+                
+                renderBudgets();
+                renderExpenseCategories();
+                updateDashboard();
+                
+                showNotification('Sucesso', 'Orçamento removido com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao remover orçamento:', error);
+                showNotification('Erro', 'Não foi possível remover o orçamento. Por favor, tente novamente.', 'danger');
+            } finally {
+                showLoading(false);
+            }
         }
 
         // Adicionar categoria
-        function addCategory(categoryData) {
+        async function addCategory(categoryData) {
             const { name, type, color, icon } = categoryData;
             
-            // Verificar se já existe categoria com este nome
-            const existingCategory = categories.find(c => c.name.toLowerCase() === name.toLowerCase());
-            if (existingCategory) {
-                showNotification('Atenção', 'Já existe uma categoria com este nome!', 'warning');
-                return;
+            try {
+                showLoading(true);
+                
+                // Verificar se já existe categoria com este nome
+                const existingCategory = categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+                if (existingCategory) {
+                    showNotification('Atenção', 'Já existe uma categoria com este nome!', 'warning');
+                    return;
+                }
+                
+                const newCategory = {
+                    name,
+                    type,
+                    color: color || '#4361ee',
+                    icon: icon || 'bi-tag'
+                };
+                
+                // Adicionar ao IndexedDB
+                await addToStore(STORES.CATEGORIES, newCategory);
+                
+                // Atualizar dados em memória
+                await loadAllData();
+                
+                // Atualizar a interface
+                renderCategoryOptions();
+                renderCategoryLists();
+                
+                // Fechar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+                if (modal) modal.hide();
+                
+                // Resetar formulário
+                document.getElementById('category-form').reset();
+                document.getElementById('category-color').value = '#4361ee';
+                document.getElementById('category-income').checked = true;
+                
+                showNotification('Sucesso', 'Categoria adicionada com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao adicionar categoria:', error);
+                showNotification('Erro', 'Não foi possível adicionar a categoria. Por favor, tente novamente.', 'danger');
+            } finally {
+                showLoading(false);
             }
-            
-            const newCategory = {
-                id: getNextId(categories),
-                name,
-                type,
-                color: color || '#4361ee',
-                icon: icon || 'bi-tag'
-            };
-            
-            categories.push(newCategory);
-            
-            // Salvar dados
-            saveData();
-            
-            // Atualizar a interface
-            renderCategoryOptions();
-            renderCategoryLists();
-            
-            // Fechar modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
-            if (modal) modal.hide();
-            
-            // Resetar formulário
-            document.getElementById('category-form').reset();
-            document.getElementById('category-color').value = '#4361ee';
-            document.getElementById('category-income').checked = true;
-            
-            showNotification('Sucesso', 'Categoria adicionada com sucesso!', 'success');
         }
 
         // Editar categoria
@@ -1694,95 +2368,127 @@
         }
 
         // Salvar edição de categoria
-        function saveCategoryEdit(categoryData) {
+        async function saveCategoryEdit(categoryData) {
             const { id, name, type, color, icon } = categoryData;
             
-            const categoryIndex = categories.findIndex(c => c.id === id);
-            if (categoryIndex === -1) return;
-            
-            // Verificar se já existe outra categoria com este nome
-            const existingCategory = categories.find(c => c.id !== id && c.name.toLowerCase() === name.toLowerCase());
-            if (existingCategory) {
-                showNotification('Atenção', 'Já existe uma categoria com este nome!', 'warning');
-                return;
+            try {
+                showLoading(true);
+                
+                // Verificar se já existe outra categoria com este nome
+                const existingCategory = categories.find(c => c.id !== id && c.name.toLowerCase() === name.toLowerCase());
+                if (existingCategory) {
+                    showNotification('Atenção', 'Já existe uma categoria com este nome!', 'warning');
+                    return;
+                }
+                
+                const categoryIndex = categories.findIndex(c => c.id === id);
+                if (categoryIndex === -1) {
+                    showNotification('Erro', 'Categoria não encontrada.', 'danger');
+                    return;
+                }
+                
+                const updatedCategory = {
+                    ...categories[categoryIndex],
+                    name,
+                    type,
+                    color,
+                    icon
+                };
+                
+                // Atualizar no IndexedDB
+                await updateInStore(STORES.CATEGORIES, updatedCategory);
+                
+                // Atualizar dados em memória
+                await loadAllData();
+                
+                // Atualizar a interface
+                renderCategoryOptions();
+                renderCategoryLists();
+                
+                // Fechar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editCategoryModal'));
+                if (modal) modal.hide();
+                
+                showNotification('Sucesso', 'Categoria atualizada com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao atualizar categoria:', error);
+                showNotification('Erro', 'Não foi possível atualizar a categoria. Por favor, tente novamente.', 'danger');
+            } finally {
+                showLoading(false);
             }
-            
-            // Atualizar categoria
-            categories[categoryIndex] = {
-                ...categories[categoryIndex],
-                name,
-                type,
-                color,
-                icon
-            };
-            
-            // Salvar dados
-            saveData();
-            
-            // Atualizar a interface
-            renderCategoryOptions();
-            renderCategoryLists();
-            
-            // Fechar modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editCategoryModal'));
-            if (modal) modal.hide();
-            
-            showNotification('Sucesso', 'Categoria atualizada com sucesso!', 'success');
         }
 
         // Excluir categoria
-        function deleteCategory() {
+        async function deleteCategory() {
             const categoryId = currentCategoryId;
             const category = categories.find(c => c.id === categoryId);
             if (!category) return;
             
-            // Verificar se há transações usando esta categoria
-            const transactionsUsingCategory = transactions.filter(t => t.category === category.name);
-            if (transactionsUsingCategory.length > 0) {
-                showConfirmation(
-                    'Excluir Categoria',
-                    `Esta categoria está sendo usada por ${transactionsUsingCategory.length} transação(ões). Ao excluí-la, essas transações serão movidas para a categoria "Outros". Deseja continuar?`,
-                    function() {
-                        proceedWithCategoryDeletion(categoryId, category.name);
-                    }
-                );
-                return;
+            try {
+                showLoading(true);
+                
+                // Verificar se há transações usando esta categoria
+                const transactionsUsingCategory = transactions.filter(t => t.category === category.name);
+                if (transactionsUsingCategory.length > 0) {
+                    showConfirmation(
+                        'Excluir Categoria',
+                        `Esta categoria está sendo usada por ${transactionsUsingCategory.length} transação(ões). Ao excluí-la, essas transações serão movidas para a categoria "Outros". Deseja continuar?`,
+                        async function() {
+                            await proceedWithCategoryDeletion(categoryId, category.name);
+                        }
+                    );
+                    return;
+                }
+                
+                await proceedWithCategoryDeletion(categoryId, category.name);
+                
+            } catch (error) {
+                console.error('Erro ao excluir categoria:', error);
+                showNotification('Erro', 'Não foi possível excluir a categoria. Por favor, tente novamente.', 'danger');
+                showLoading(false);
             }
-            
-            proceedWithCategoryDeletion(categoryId, category.name);
         }
 
         // Continuar exclusão da categoria
-        function proceedWithCategoryDeletion(categoryId, categoryName) {
-            // Atualizar transações para usar a categoria "Outros"
-            transactions.forEach(t => {
-                if (t.category === categoryName) {
-                    t.category = 'Outros';
+        async function proceedWithCategoryDeletion(categoryId, categoryName) {
+            try {
+                // Atualizar transações para usar a categoria "Outros"
+                for (const transaction of transactions) {
+                    if (transaction.category === categoryName) {
+                        transaction.category = 'Outros';
+                        await updateInStore(STORES.TRANSACTIONS, transaction);
+                    }
                 }
-            });
-            
-            // Atualizar orçamentos
-            const budgetIndex = budgets.findIndex(b => b.category === categoryName);
-            if (budgetIndex !== -1) {
-                budgets.splice(budgetIndex, 1);
+                
+                // Atualizar orçamentos
+                const budgetIndex = budgets.findIndex(b => b.category === categoryName);
+                if (budgetIndex !== -1) {
+                    await removeFromStore(STORES.BUDGETS, categoryName);
+                }
+                
+                // Remover categoria
+                await removeFromStore(STORES.CATEGORIES, categoryId);
+                
+                // Atualizar dados em memória
+                await loadAllData();
+                
+                // Atualizar a interface
+                renderCategoryOptions();
+                renderCategoryLists();
+                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
+                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString()), 'all-transactions-list');
+                renderExpenseCategories();
+                renderBudgets();
+                
+                showNotification('Sucesso', 'Categoria excluída com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao processar exclusão da categoria:', error);
+                throw error;
+            } finally {
+                showLoading(false);
             }
-            
-            // Remover categoria
-            const categoryIndex = categories.findIndex(c => c.id === categoryId);
-            categories.splice(categoryIndex, 1);
-            
-            // Salvar dados
-            saveData();
-            
-            // Atualizar a interface
-            renderCategoryOptions();
-            renderCategoryLists();
-            renderTransactions(filterTransactions('all', '', ''), 'transactions-list', 5);
-            renderTransactions(filterTransactions('all', '', ''), 'all-transactions-list');
-            renderExpenseCategories();
-            renderBudgets();
-            
-            showNotification('Sucesso', 'Categoria excluída com sucesso!', 'success');
         }
 
         // Função auxiliar para determinar cor de contraste
@@ -1797,18 +2503,97 @@
 
         // Gerar relatório
         function generateReport(period, type) {
-            // Simular dados do relatório
+            // Determinar qual mês usar para o relatório
+            let reportMonth = currentSelectedMonth;
+            let reportYear = currentSelectedYear;
+            
+            if (period === 'current-month') {
+                const currentDate = new Date();
+                reportMonth = currentDate.getMonth();
+                reportYear = currentDate.getFullYear();
+            } else if (period === 'last-month') {
+                reportMonth = currentSelectedMonth - 1;
+                if (reportMonth < 0) {
+                    reportMonth = 11;
+                    reportYear--;
+                }
+            } else if (period === 'selected-month') {
+                // Usar o mês selecionado
+                reportMonth = currentSelectedMonth;
+                reportYear = currentSelectedYear;
+            }
+            
             let labels, data;
             
             if (type === 'expenses') {
-                labels = ['Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação'];
-                data = [420, 180, 950, 107.9, 89.9, 120];
+                // Agrupar despesas por categoria do mês do relatório
+                const categoryTotals = {};
+                transactions.forEach(transaction => {
+                    const transactionDate = new Date(transaction.date);
+                    if (transaction.type === 'expense' && 
+                        transactionDate.getMonth() === reportMonth && 
+                        transactionDate.getFullYear() === reportYear) {
+                        
+                        if (!categoryTotals[transaction.category]) {
+                            categoryTotals[transaction.category] = 0;
+                        }
+                        categoryTotals[transaction.category] += transaction.amount;
+                    }
+                });
+                
+                labels = Object.keys(categoryTotals);
+                data = Object.values(categoryTotals);
+                
+                if (labels.length === 0) {
+                    labels = ['Nenhuma despesa'];
+                    data = [0];
+                }
             } else if (type === 'income-vs-expenses') {
+                // Calcular receitas vs despesas do mês do relatório
+                let monthlyIncome = 0;
+                let monthlyExpense = 0;
+                
+                transactions.forEach(transaction => {
+                    const transactionDate = new Date(transaction.date);
+                    if (transactionDate.getMonth() === reportMonth && 
+                        transactionDate.getFullYear() === reportYear) {
+                        
+                        if (transaction.type === 'income') {
+                            monthlyIncome += transaction.amount;
+                        } else {
+                            monthlyExpense += transaction.amount;
+                        }
+                    }
+                });
+                
                 labels = ['Receitas', 'Despesas'];
-                data = [3580, 1329.2];
+                data = [monthlyIncome, monthlyExpense];
             } else {
-                labels = ['Ago', 'Set', 'Out'];
-                data = [2850, 3100, 3580];
+                // Tendência mensal (mês do relatório e 2 meses anteriores)
+                const months = [];
+                const monthlyData = [];
+                
+                for (let i = 2; i >= 0; i--) {
+                    const monthDate = new Date(reportYear, reportMonth - i, 1);
+                    const monthName = monthDate.toLocaleDateString('pt-BR', { month: 'short' });
+                    months.push(monthName.charAt(0).toUpperCase() + monthName.slice(1));
+                    
+                    // Calcular receitas do mês
+                    const monthIncome = transactions.reduce((sum, transaction) => {
+                        const transDate = new Date(transaction.date);
+                        if (transaction.type === 'income' && 
+                            transDate.getMonth() === monthDate.getMonth() && 
+                            transDate.getFullYear() === monthDate.getFullYear()) {
+                            return sum + transaction.amount;
+                        }
+                        return sum;
+                    }, 0);
+                    
+                    monthlyData.push(monthIncome);
+                }
+                
+                labels = months;
+                data = monthlyData;
             }
             
             // Destruir gráfico anterior se existir
@@ -1827,10 +2612,10 @@
                         data: data,
                         backgroundColor: type === 'income-vs-expenses' 
                             ? ['#4cc9f0', '#f72585']
-                            : ['#4361ee', '#3f37c9', '#4cc9f0', '#f72585', '#ff9e00', '#7209b7'],
+                            : generateColors(labels.length),
                         borderColor: type === 'income-vs-expenses' 
                             ? ['#4cc9f0', '#f72585']
-                            : ['#4361ee', '#3f37c9', '#4cc9f0', '#f72585', '#ff9e00', '#7209b7'],
+                            : generateColors(labels.length),
                         borderWidth: 1
                     }]
                 },
@@ -1843,8 +2628,8 @@
                         },
                         title: {
                             display: true,
-                            text: type === 'expenses' ? 'Despesas por Categoria' : 
-                                  type === 'income-vs-expenses' ? 'Receitas vs Despesas' : 'Tendência de Receitas Mensais'
+                            text: `${type === 'expenses' ? 'Despesas por Categoria' : 
+                                  type === 'income-vs-expenses' ? 'Receitas vs Despesas' : 'Tendência de Receitas Mensais'} - ${formatMonthYear(reportMonth, reportYear)}`
                         }
                     }
                 }
@@ -1852,24 +2637,44 @@
             
             // Atualizar resumo financeiro
             const summaryContainer = document.getElementById('financial-summary');
-            const totals = calculateTotals();
+            
+            // Calcular totais do mês do relatório
+            let monthlyIncome = 0;
+            let monthlyExpense = 0;
+            let monthlyTransactions = 0;
+            
+            transactions.forEach(transaction => {
+                const transactionDate = new Date(transaction.date);
+                if (transactionDate.getMonth() === reportMonth && 
+                    transactionDate.getFullYear() === reportYear) {
+                    
+                    monthlyTransactions++;
+                    if (transaction.type === 'income') {
+                        monthlyIncome += transaction.amount;
+                    } else {
+                        monthlyExpense += transaction.amount;
+                    }
+                }
+            });
+            
+            const monthlyBalance = monthlyIncome - monthlyExpense;
             
             summaryContainer.innerHTML = `
                 <div class="mb-3">
-                    <h6>Receitas Totais</h6>
-                    <p class="fs-5 text-success">${formatCurrency(totals.income)}</p>
+                    <h6>Receitas do Mês</h6>
+                    <p class="fs-5 text-success">${formatCurrency(monthlyIncome)}</p>
                 </div>
                 <div class="mb-3">
-                    <h6>Despesas Totais</h6>
-                    <p class="fs-5 text-danger">${formatCurrency(totals.expense)}</p>
+                    <h6>Despesas do Mês</h6>
+                    <p class="fs-5 text-danger">${formatCurrency(monthlyExpense)}</p>
                 </div>
                 <div class="mb-3">
-                    <h6>Saldo</h6>
-                    <p class="fs-5 ${totals.balance >= 0 ? 'text-primary' : 'text-danger'}">${formatCurrency(totals.balance)}</p>
+                    <h6>Saldo do Mês</h6>
+                    <p class="fs-5 ${monthlyBalance >= 0 ? 'text-primary' : 'text-danger'}">${formatCurrency(monthlyBalance)}</p>
                 </div>
                 <div class="mb-3">
-                    <h6>Maior Despesa</h6>
-                    <p class="fs-6">Aluguel - ${formatCurrency(950.00)}</p>
+                    <h6>Transações do Mês</h6>
+                    <p class="fs-6">${monthlyTransactions} transações</p>
                 </div>
             `;
             
@@ -1879,9 +2684,20 @@
             
             // Analisar orçamentos para recomendações
             budgets.forEach(budget => {
-                const percentage = (budget.spent / budget.budget) * 100;
+                // Calcular gastos do mês do relatório para esta categoria
+                const spentThisMonth = transactions
+                    .filter(t => {
+                        const transactionDate = new Date(t.date);
+                        return t.type === 'expense' && 
+                               t.category === budget.category &&
+                               transactionDate.getMonth() === reportMonth &&
+                               transactionDate.getFullYear() === reportYear;
+                    })
+                    .reduce((sum, t) => sum + t.amount, 0);
                 
-                if (percentage > 90) {
+                const percentage = (spentThisMonth / budget.budget) * 100;
+                
+                if (percentage > 90 && percentage <= 100) {
                     recommendationsHTML += `
                         <div class="alert alert-warning py-2">
                             <i class="bi bi-exclamation-triangle me-2"></i>
@@ -1892,17 +2708,17 @@
                     recommendationsHTML += `
                         <div class="alert alert-danger py-2">
                             <i class="bi bi-exclamation-octagon me-2"></i>
-                            Você excedeu o orçamento de <strong>${budget.category}</strong> em ${formatCurrency(budget.spent - budget.budget)}.
+                            Você excedeu o orçamento de <strong>${budget.category}</strong> em ${formatCurrency(spentThisMonth - budget.budget)}.
                         </div>
                     `;
                 }
             });
             
-            if (totals.expense > totals.income * 0.7) {
+            if (monthlyExpense > monthlyIncome * 0.7 && monthlyIncome > 0) {
                 recommendationsHTML += `
                     <div class="alert alert-info py-2">
                         <i class="bi bi-lightbulb me-2"></i>
-                        Suas despesas estão altas (${((totals.expense / totals.income) * 100).toFixed(1)}% da renda). Considere reduzir gastos.
+                        Suas despesas estão altas (${((monthlyExpense / monthlyIncome) * 100).toFixed(1)}% da renda). Considere reduzir gastos.
                     </div>
                 `;
             }
@@ -1911,7 +2727,7 @@
                 recommendationsHTML = `
                     <div class="alert alert-success py-2">
                         <i class="bi bi-check-circle me-2"></i>
-                        Suas finanças estão saudáveis! Continue com o bom gerenciamento.
+                        Suas finanças deste mês estão saudáveis! Continue com o bom gerenciamento.
                     </div>
                 `;
             }
@@ -1919,6 +2735,23 @@
             recommendationsContainer.innerHTML = recommendationsHTML;
             
             showNotification('Sucesso', 'Relatório gerado com sucesso!', 'success');
+        }
+
+        // Gerar cores para gráficos
+        function generateColors(count) {
+            const colors = ['#4361ee', '#3f37c9', '#4cc9f0', '#f72585', '#ff9e00', '#7209b7'];
+            if (count <= colors.length) {
+                return colors.slice(0, count);
+            }
+            
+            // Gerar cores adicionais se necessário
+            const additionalColors = [];
+            for (let i = 0; i < count - colors.length; i++) {
+                const hue = (i * 137.508) % 360; // Usar ângulo dourado para distribuição
+                additionalColors.push(`hsl(${hue}, 70%, 65%)`);
+            }
+            
+            return [...colors, ...additionalColors];
         }
 
         // Navegação entre seções
@@ -1940,195 +2773,269 @@
                     link.classList.add('active');
                 }
             });
+            
+            // Atualizar a seção com os dados do mês selecionado
+            if (sectionId === 'dashboard') {
+                updateDashboard();
+                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
+                renderExpenseCategories();
+            } else if (sectionId === 'transactions') {
+                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString()), 'all-transactions-list');
+            } else if (sectionId === 'budget') {
+                renderBudgets();
+            } else if (sectionId === 'reports') {
+                generateReport('selected-month', 'expenses');
+            }
         }
 
         // Inicializar aplicativo
-        function initApp() {
-            // Configurar eventos de navegação no rodapé
-            document.querySelectorAll('.bottom-nav .nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
+        async function initApp() {
+            try {
+                // Inicializar IndexedDB
+                await initDatabase();
+                
+                // Carregar dados
+                const dataLoaded = await loadAllData();
+                
+                if (!dataLoaded) {
+                    showNotification('Erro', 'Não foi possível carregar os dados. Algumas funcionalidades podem não estar disponíveis.', 'danger');
+                }
+                
+                // Configurar eventos de navegação no rodapé
+                document.querySelectorAll('.bottom-nav .nav-link').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const sectionId = this.getAttribute('data-section');
+                        if (sectionId) {
+                            showSection(sectionId);
+                        }
+                    });
+                });
+                
+                // Eventos para navegação de mês (Dashboard)
+                document.getElementById('prev-month-btn').addEventListener('click', goToPreviousMonth);
+                document.getElementById('next-month-btn').addEventListener('click', goToNextMonth);
+                document.getElementById('go-to-current-month').addEventListener('click', goToCurrentMonth);
+                
+                // Eventos para navegação de mês (Transações)
+                document.getElementById('prev-month-btn-transactions').addEventListener('click', goToPreviousMonth);
+                document.getElementById('next-month-btn-transactions').addEventListener('click', goToNextMonth);
+                document.getElementById('go-to-current-month-transactions').addEventListener('click', goToCurrentMonth);
+                
+                // Eventos para navegação de mês (Orçamento)
+                document.getElementById('prev-month-btn-budget').addEventListener('click', goToPreviousMonth);
+                document.getElementById('next-month-btn-budget').addEventListener('click', goToNextMonth);
+                document.getElementById('go-to-current-month-budget').addEventListener('click', goToCurrentMonth);
+                
+                // Eventos para navegação de mês (Relatórios)
+                document.getElementById('prev-month-btn-reports').addEventListener('click', goToPreviousMonth);
+                document.getElementById('next-month-btn-reports').addEventListener('click', goToNextMonth);
+                document.getElementById('go-to-current-month-reports').addEventListener('click', goToCurrentMonth);
+                
+                // Evento para transação recorrente
+                document.getElementById('transaction-recurring').addEventListener('change', function() {
+                    const recurringOptions = document.getElementById('recurring-options');
+                    recurringOptions.style.display = this.checked ? 'block' : 'none';
+                });
+                
+                // Evento para o formulário de transação
+                document.getElementById('transaction-form').addEventListener('submit', function(e) {
                     e.preventDefault();
-                    const sectionId = this.getAttribute('data-section');
-                    if (sectionId) {
-                        showSection(sectionId);
+                    
+                    const type = document.querySelector('input[name="transaction-type"]:checked').value;
+                    const description = document.getElementById('transaction-description').value;
+                    const amount = parseFloat(document.getElementById('transaction-amount').value);
+                    const category = document.getElementById('transaction-category').value;
+                    const date = document.getElementById('transaction-date').value;
+                    const notes = document.getElementById('transaction-notes').value;
+                    const recurring = document.getElementById('transaction-recurring').checked;
+                    const frequency = recurring ? parseInt(document.getElementById('recurring-frequency').value) : 1;
+                    const times = recurring ? parseInt(document.getElementById('recurring-times').value) : 1;
+                    
+                    if (!category) {
+                        showNotification('Atenção', 'Por favor, selecione uma categoria.', 'warning');
+                        return;
+                    }
+                    
+                    addTransaction({
+                        type,
+                        description,
+                        amount,
+                        category,
+                        date,
+                        notes,
+                        recurring,
+                        frequency,
+                        times
+                    });
+                });
+                
+                // Evento para o formulário de orçamento
+                document.getElementById('budget-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const category = document.getElementById('budget-category').value;
+                    const amount = parseFloat(document.getElementById('budget-amount').value);
+                    
+                    if (!category) {
+                        showNotification('Atenção', 'Por favor, selecione uma categoria.', 'warning');
+                        return;
+                    }
+                    
+                    if (!amount || amount <= 0) {
+                        showNotification('Atenção', 'Por favor, insira um valor válido para o orçamento.', 'warning');
+                        return;
+                    }
+                    
+                    addBudget(category, amount);
+                });
+                
+                // Evento para o formulário de categoria
+                document.getElementById('category-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('category-name').value.trim();
+                    const type = document.querySelector('input[name="category-type"]:checked').value;
+                    const color = document.getElementById('category-color').value;
+                    const icon = document.getElementById('category-icon').value;
+                    
+                    if (!name) {
+                        showNotification('Atenção', 'Por favor, insira um nome para a categoria.', 'warning');
+                        return;
+                    }
+                    
+                    addCategory({
+                        name,
+                        type,
+                        color,
+                        icon
+                    });
+                });
+                
+                // Evento para o formulário de edição de categoria
+                document.getElementById('edit-category-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const id = parseInt(document.getElementById('edit-category-id').value);
+                    const name = document.getElementById('edit-category-name').value.trim();
+                    const type = document.querySelector('input[name="edit-category-type"]:checked').value;
+                    const color = document.getElementById('edit-category-color').value;
+                    const icon = document.getElementById('edit-category-icon').value;
+                    
+                    if (!name) {
+                        showNotification('Atenção', 'Por favor, insira um nome para a categoria.', 'warning');
+                        return;
+                    }
+                    
+                    saveCategoryEdit({
+                        id,
+                        name,
+                        type,
+                        color,
+                        icon
+                    });
+                });
+                
+                // Evento para preview de cor da categoria
+                document.getElementById('category-color').addEventListener('input', function() {
+                    const preview = document.getElementById('category-preview');
+                    preview.style.backgroundColor = this.value;
+                    preview.style.color = getContrastColor(this.value);
+                });
+                
+                // Evento para preview de cor da categoria (edição)
+                document.getElementById('edit-category-color').addEventListener('input', function() {
+                    const preview = document.getElementById('edit-category-preview');
+                    preview.style.backgroundColor = this.value;
+                    preview.style.color = getContrastColor(this.value);
+                });
+                
+                // Evento para filtros de transações no dashboard
+                document.querySelectorAll('.filter-badge').forEach(badge => {
+                    badge.addEventListener('click', function() {
+                        const filter = this.getAttribute('data-filter');
+                        const filtered = filterTransactionsByMonth(filter);
+                        renderTransactions(filtered, 'transactions-list', 5);
+                        
+                        // Ativar badge selecionado
+                        document.querySelectorAll('.filter-badge').forEach(b => {
+                            b.classList.remove('bg-primary', 'text-white');
+                            b.classList.add('bg-light', 'text-dark');
+                        });
+                        
+                        this.classList.remove('bg-light', 'text-dark');
+                        this.classList.add('bg-primary', 'text-white');
+                    });
+                });
+                
+                // Evento para busca de transações na seção de transações
+                document.getElementById('search-transaction').addEventListener('input', function() {
+                    const search = this.value;
+                    const category = document.getElementById('filter-category').value;
+                    const monthFilter = document.getElementById('filter-month').value;
+                    const filtered = filterAllTransactions('all', search, category, monthFilter);
+                    renderTransactions(filtered, 'all-transactions-list');
+                });
+                
+                // Evento para filtro de categoria na seção de transações
+                document.getElementById('filter-category').addEventListener('change', function() {
+                    const category = this.value;
+                    const search = document.getElementById('search-transaction').value;
+                    const monthFilter = document.getElementById('filter-month').value;
+                    const filtered = filterAllTransactions('all', search, category, monthFilter);
+                    renderTransactions(filtered, 'all-transactions-list');
+                });
+                
+                // Evento para filtro de mês na seção de transações
+                document.getElementById('filter-month').addEventListener('change', function() {
+                    const monthFilter = this.value;
+                    const search = document.getElementById('search-transaction').value;
+                    const category = document.getElementById('filter-category').value;
+                    const filtered = filterAllTransactions('all', search, category, monthFilter);
+                    renderTransactions(filtered, 'all-transactions-list');
+                });
+                
+                // Evento para gerar relatório
+                document.getElementById('generate-report').addEventListener('click', function() {
+                    const period = document.getElementById('report-period').value;
+                    const type = document.getElementById('report-type').value;
+                    generateReport(period, type);
+                });
+                
+                // Evento para ver todas as transações
+                document.getElementById('view-all-transactions').addEventListener('click', function() {
+                    showSection('transactions');
+                });
+                
+                // Evento para confirmação de modal
+                document.getElementById('confirmationModalConfirm').addEventListener('click', function() {
+                    if (confirmationCallback) {
+                        confirmationCallback();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+                        if (modal) modal.hide();
                     }
                 });
-            });
-            
-            // Evento para transação recorrente
-            document.getElementById('transaction-recurring').addEventListener('change', function() {
-                const recurringOptions = document.getElementById('recurring-options');
-                recurringOptions.style.display = this.checked ? 'block' : 'none';
-            });
-            
-            // Evento para o formulário de transação
-            document.getElementById('transaction-form').addEventListener('submit', function(e) {
-                e.preventDefault();
                 
-                const type = document.querySelector('input[name="transaction-type"]:checked').value;
-                const description = document.getElementById('transaction-description').value;
-                const amount = parseFloat(document.getElementById('transaction-amount').value);
-                const category = document.getElementById('transaction-category').value;
-                const date = document.getElementById('transaction-date').value;
-                const notes = document.getElementById('transaction-notes').value;
-                const recurring = document.getElementById('transaction-recurring').checked;
-                const frequency = recurring ? parseInt(document.getElementById('recurring-frequency').value) : 1;
-                const times = recurring ? parseInt(document.getElementById('recurring-times').value) : 1;
+                // Inicializar interface
+                updateMonthDisplay();
+                updateDashboard();
+                renderCategoryOptions();
+                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
+                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString()), 'all-transactions-list');
+                renderExpenseCategories();
+                renderUpcomingBills();
+                renderBudgets();
+                renderCategoryLists();
                 
-                addTransaction({
-                    type,
-                    description,
-                    amount,
-                    category,
-                    date,
-                    notes,
-                    recurring,
-                    frequency,
-                    times
-                });
-            });
-            
-            // Evento para o formulário de orçamento
-            document.getElementById('budget-form').addEventListener('submit', function(e) {
-                e.preventDefault();
+                // Mostrar seção inicial
+                showSection('dashboard');
                 
-                const category = document.getElementById('budget-category').value;
-                const amount = parseFloat(document.getElementById('budget-amount').value);
+                console.log('Aplicativo inicializado com sucesso!');
                 
-                addBudget(category, amount);
-            });
-            
-            // Evento para o formulário de categoria
-            document.getElementById('category-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('category-name').value;
-                const type = document.querySelector('input[name="category-type"]:checked').value;
-                const color = document.getElementById('category-color').value;
-                const icon = document.getElementById('category-icon').value;
-                
-                addCategory({
-                    name,
-                    type,
-                    color,
-                    icon
-                });
-            });
-            
-            // Evento para o formulário de edição de categoria
-            document.getElementById('edit-category-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const id = parseInt(document.getElementById('edit-category-id').value);
-                const name = document.getElementById('edit-category-name').value;
-                const type = document.querySelector('input[name="edit-category-type"]:checked').value;
-                const color = document.getElementById('edit-category-color').value;
-                const icon = document.getElementById('edit-category-icon').value;
-                
-                saveCategoryEdit({
-                    id,
-                    name,
-                    type,
-                    color,
-                    icon
-                });
-            });
-            
-            // Evento para preview de cor da categoria
-            document.getElementById('category-color').addEventListener('input', function() {
-                const preview = document.getElementById('category-preview');
-                preview.style.backgroundColor = this.value;
-                preview.style.color = getContrastColor(this.value);
-            });
-            
-            // Evento para preview de cor da categoria (edição)
-            document.getElementById('edit-category-color').addEventListener('input', function() {
-                const preview = document.getElementById('edit-category-preview');
-                preview.style.backgroundColor = this.value;
-                preview.style.color = getContrastColor(this.value);
-            });
-            
-            // Evento para filtros de transações
-            document.querySelectorAll('.filter-badge').forEach(badge => {
-                badge.addEventListener('click', function() {
-                    const filter = this.getAttribute('data-filter');
-                    const filtered = filterTransactions(filter);
-                    renderTransactions(filtered, 'transactions-list', 5);
-                    
-                    // Ativar badge selecionado
-                    document.querySelectorAll('.filter-badge').forEach(b => {
-                        b.classList.remove('bg-primary', 'text-white');
-                        b.classList.add('bg-light', 'text-dark');
-                    });
-                    
-                    this.classList.remove('bg-light', 'text-dark');
-                    this.classList.add('bg-primary', 'text-white');
-                });
-            });
-            
-            // Evento para busca de transações
-            document.getElementById('search-transaction').addEventListener('input', function() {
-                const search = this.value;
-                const category = document.getElementById('filter-category').value;
-                const month = document.getElementById('filter-month').value;
-                const filtered = filterTransactions('all', search, category, month);
-                renderTransactions(filtered, 'all-transactions-list');
-            });
-            
-            // Evento para filtro de categoria
-            document.getElementById('filter-category').addEventListener('change', function() {
-                const category = this.value;
-                const search = document.getElementById('search-transaction').value;
-                const month = document.getElementById('filter-month').value;
-                const filtered = filterTransactions('all', search, category, month);
-                renderTransactions(filtered, 'all-transactions-list');
-            });
-            
-            // Evento para filtro de mês
-            document.getElementById('filter-month').addEventListener('change', function() {
-                const month = this.value;
-                const search = document.getElementById('search-transaction').value;
-                const category = document.getElementById('filter-category').value;
-                const filtered = filterTransactions('all', search, category, month);
-                renderTransactions(filtered, 'all-transactions-list');
-            });
-            
-            // Evento para gerar relatório
-            document.getElementById('generate-report').addEventListener('click', function() {
-                const period = document.getElementById('report-period').value;
-                const type = document.getElementById('report-type').value;
-                generateReport(period, type);
-            });
-            
-            // Evento para ver todas as transações
-            document.getElementById('view-all-transactions').addEventListener('click', function() {
-                showSection('transactions');
-            });
-            
-            // Evento para confirmação de modal
-            document.getElementById('confirmationModalConfirm').addEventListener('click', function() {
-                if (confirmationCallback) {
-                    confirmationCallback();
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
-                    if (modal) modal.hide();
-                }
-            });
-            
-            // Inicializar dados
-            updateTotals();
-            renderCategoryOptions();
-            renderTransactions(filterTransactions('all', '', ''), 'transactions-list', 5);
-            renderTransactions(filterTransactions('all', '', ''), 'all-transactions-list');
-            renderExpenseCategories();
-            renderUpcomingBills();
-            renderBudgets();
-            renderCategoryLists();
-            
-            // Gerar relatório inicial
-            generateReport('current-month', 'expenses');
-            
-            // Mostrar seção inicial
-            showSection('dashboard');
+            } catch (error) {
+                console.error('Erro ao inicializar o aplicativo:', error);
+                showNotification('Erro Crítico', 'Não foi possível inicializar o aplicativo. Por favor, recarregue a página.', 'danger');
+            }
         }
 
         // Inicializar quando o DOM estiver carregado
