@@ -35,140 +35,6 @@
             margin: 0 auto;
         }
         
-        /* ========== ESTILOS PARA SELEÇÃO DE TRANSAÇÕES ========== */
-        
-        .transaction-item {
-            position: relative;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-            transition: var(--transition);
-            cursor: pointer;
-            padding-left: 40px; /* Espaço para o checkbox */
-        }
-        
-        .transaction-item:hover {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-        
-        .transaction-item.selected {
-            background-color: #F0F7FF;
-            border-left: 3px solid var(--primary-color);
-            border-radius: 8px;
-            margin: 5px 0;
-        }
-        
-        .transaction-checkbox {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ddd;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-        
-        .transaction-item.selected .transaction-checkbox {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .transaction-checkbox:after {
-            content: '';
-            width: 6px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        
-        .transaction-item.selected .transaction-checkbox:after {
-            opacity: 1;
-        }
-        
-        /* Barra de ações para itens selecionados */
-        .selection-action-bar {
-            position: fixed;
-            bottom: 70px; /* Acima da barra de navegação */
-            left: 0;
-            right: 0;
-            background-color: white;
-            padding: 12px 15px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            z-index: 999;
-            border-top: 1px solid #eee;
-        }
-        
-        .selection-action-bar.visible {
-            transform: translateY(0);
-        }
-        
-        .selection-info {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: var(--gray-color);
-        }
-        
-        .selection-count {
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 0 5px;
-        }
-        
-        .selection-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .selection-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            transition: var(--transition);
-        }
-        
-        .selection-btn-edit {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .selection-btn-delete {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        
-        .selection-btn-complete {
-            background-color: var(--success-color);
-            color: white;
-        }
-        
-        .selection-btn-pending {
-            background-color: var(--warning-color);
-            color: white;
-        }
-        
-        .selection-btn:hover {
-            transform: scale(1.1);
-            opacity: 0.9;
-        }
-        
-        /* ========== FIM DOS ESTILOS DE SELEÇÃO ========== */
-        
         .dashboard-card {
             background: white;
             border-radius: var(--border-radius);
@@ -212,6 +78,16 @@
         .expense-icon {
             background-color: rgba(247, 37, 133, 0.2);
             color: var(--danger-color);
+        }
+        
+        .transaction-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+        
+        .transaction-item:hover {
+            background-color: rgba(0, 0, 0, 0.02);
         }
         
         .transaction-income .amount {
@@ -315,6 +191,20 @@
         
         .filter-badge:hover {
             opacity: 0.8;
+        }
+        
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        
+        .btn-action:hover {
+            transform: scale(1.1);
         }
         
         .category-badge {
@@ -556,17 +446,6 @@
             color: var(--gray-color);
         }
         
-        /* Data de efetivação */
-        .effective-date-badge {
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            background-color: rgba(67, 97, 238, 0.1);
-            color: var(--primary-color);
-            margin-left: 5px;
-            border: 1px solid rgba(67, 97, 238, 0.2);
-        }
-        
         @media (max-width: 768px) {
             .balance-card h2 {
                 font-size: 2rem;
@@ -613,47 +492,6 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            
-            .transaction-item {
-                padding-left: 35px;
-                padding-right: 10px;
-            }
-            
-            .transaction-checkbox {
-                left: 8px;
-                width: 18px;
-                height: 18px;
-            }
-            
-            .selection-action-bar {
-                padding: 10px 12px;
-            }
-            
-            .selection-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .transaction-item {
-                padding: 12px 0 12px 30px;
-            }
-            
-            .selection-action-bar {
-                padding: 8px 10px;
-            }
-            
-            .selection-info {
-                font-size: 12px;
-            }
-            
-            .selection-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 0.8rem;
-            }
         }
     </style>
 </head>
@@ -680,27 +518,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Barra de Ações para Itens Selecionados -->
-    <div class="selection-action-bar" id="selectionActionBar">
-        <div class="selection-info">
-            <span class="selection-count" id="selectedCount">0</span> item(s) selecionado(s)
-        </div>
-        <div class="selection-actions">
-            <button class="selection-btn selection-btn-complete" id="completeSelectedBtn" title="Efetivar selecionados">
-                <i class="bi bi-check-circle"></i>
-            </button>
-            <button class="selection-btn selection-btn-pending" id="markPendingSelectedBtn" title="Marcar como pendente">
-                <i class="bi bi-clock"></i>
-            </button>
-            <button class="selection-btn selection-btn-edit" id="editSelectedBtn" title="Editar selecionados">
-                <i class="bi bi-pencil"></i>
-            </button>
-            <button class="selection-btn selection-btn-delete" id="deleteSelectedBtn" title="Excluir selecionados">
-                <i class="bi bi-trash"></i>
-            </button>
         </div>
     </div>
 
@@ -1218,7 +1035,7 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="transaction-date" class="form-label">Data da Transação</label>
+                            <label for="transaction-date" class="form-label">Data</label>
                             <input type="date" class="form-control" id="transaction-date" required>
                         </div>
                         
@@ -1257,12 +1074,6 @@
                                     <i class="bi bi-check-circle text-success me-1"></i>Marcar como efetivada
                                 </label>
                             </div>
-                        </div>
-                        
-                        <div class="mb-3" id="effective-date-container">
-                            <label for="transaction-effective-date" class="form-label">Data da Efetivação</label>
-                            <input type="date" class="form-control" id="transaction-effective-date">
-                            <div class="form-text">Deixe em branco para usar a data da transação</div>
                         </div>
                         
                         <div class="mb-3">
@@ -1321,7 +1132,7 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="edit-transaction-date" class="form-label">Data da Transação</label>
+                            <label for="edit-transaction-date" class="form-label">Data</label>
                             <input type="date" class="form-control" id="edit-transaction-date" required>
                         </div>
                         
@@ -1334,12 +1145,6 @@
                             </div>
                         </div>
                         
-                        <div class="mb-3" id="edit-effective-date-container">
-                            <label for="edit-transaction-effective-date" class="form-label">Data da Efetivação</label>
-                            <input type="date" class="form-control" id="edit-transaction-effective-date">
-                            <div class="form-text">Deixe em branco para usar a data da transação</div>
-                        </div>
-                        
                         <div class="mb-3">
                             <label for="edit-transaction-notes" class="form-label">Observações (opcional)</label>
                             <textarea class="form-control" id="edit-transaction-notes" rows="2"></textarea>
@@ -1347,47 +1152,6 @@
                         
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para Efetivar Transação (Centralizado) -->
-    <div class="modal fade" id="completeTransactionModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-centered-custom">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Efetivar Transação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="complete-transaction-form">
-                        <input type="hidden" id="complete-transaction-id">
-                        
-                        <div class="mb-3">
-                            <p><strong>Transação:</strong> <span id="complete-transaction-description"></span></p>
-                            <p><strong>Valor:</strong> <span id="complete-transaction-amount"></span></p>
-                            <p><strong>Categoria:</strong> <span id="complete-transaction-category"></span></p>
-                            <p><strong>Data original:</strong> <span id="complete-transaction-original-date"></span></p>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="complete-transaction-effective-date" class="form-label">Data da Efetivação <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="complete-transaction-effective-date" required>
-                            <div class="form-text">Informe a data em que a transação foi efetivamente realizada</div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="complete-transaction-notes" class="form-label">Observações (opcional)</label>
-                            <textarea class="form-control" id="complete-transaction-notes" rows="2" placeholder="Adicione observações sobre a efetivação..."></textarea>
-                        </div>
-                        
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check-circle me-1"></i>Confirmar Efetivação
-                            </button>
                         </div>
                     </form>
                 </div>
@@ -1560,61 +1324,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // ========== SISTEMA DE SELEÇÃO ==========
-        
-        // Variáveis para controle de seleção
-        let selectedTransactions = new Set();
-        let isSelectionMode = false;
-        
-        // Elementos da barra de seleção
-        const selectionActionBar = document.getElementById('selectionActionBar');
-        const selectedCountElement = document.getElementById('selectedCount');
-        const completeSelectedBtn = document.getElementById('completeSelectedBtn');
-        const markPendingSelectedBtn = document.getElementById('markPendingSelectedBtn');
-        const editSelectedBtn = document.getElementById('editSelectedBtn');
-        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-        
-        // Atualizar contador de seleção
-        function updateSelectionCount() {
-            const count = selectedTransactions.size;
-            selectedCountElement.textContent = count;
-            
-            if (count > 0) {
-                selectionActionBar.classList.add('visible');
-            } else {
-                selectionActionBar.classList.remove('visible');
-            }
-        }
-        
-        // Alternar seleção de uma transação
-        function toggleTransactionSelection(transactionId, element) {
-            if (selectedTransactions.has(transactionId)) {
-                // Desmarcar
-                selectedTransactions.delete(transactionId);
-                element.classList.remove('selected');
-            } else {
-                // Marcar
-                selectedTransactions.add(transactionId);
-                element.classList.add('selected');
-            }
-            
-            updateSelectionCount();
-        }
-        
-        // Limpar todas as seleções
-        function clearSelections() {
-            document.querySelectorAll('.transaction-item.selected').forEach(item => {
-                item.classList.remove('selected');
-            });
-            selectedTransactions.clear();
-            updateSelectionCount();
-        }
-        
-        // ========== FIM DO SISTEMA DE SELEÇÃO ==========
-        
         // Configuração do IndexedDB
         const DB_NAME = 'FinancasProDB';
-        const DB_VERSION = 3; // Aumentado para versão 3 para adicionar campo de data de efetivação
+        const DB_VERSION = 2; // Aumentado para versão 2 para adicionar campo de status
         let db = null;
 
         // Nomes das stores (tabelas)
@@ -1633,7 +1345,6 @@
 
         // Configurar data atual no campo de data
         document.getElementById('transaction-date').valueAsDate = new Date();
-        document.getElementById('transaction-effective-date').valueAsDate = new Date();
 
         // Inicializar gráfico
         let financialChart = null;
@@ -1678,28 +1389,22 @@
                         transactionStore.createIndex('category', 'category', { unique: false });
                         transactionStore.createIndex('date', 'date', { unique: false });
                         transactionStore.createIndex('status', 'status', { unique: false });
-                        transactionStore.createIndex('effectiveDate', 'effectiveDate', { unique: false });
-                    } else if (oldVersion < 3) {
-                        // Atualizar para versão 3: adicionar campo de data de efetivação
+                    } else if (oldVersion < 2) {
+                        // Atualizar para versão 2: adicionar campo de status
                         const transactionStore = event.currentTarget.transaction.objectStore(STORES.TRANSACTIONS);
                         
-                        // Criar novo índice para effectiveDate
-                        if (!transactionStore.indexNames.contains('effectiveDate')) {
-                            transactionStore.createIndex('effectiveDate', 'effectiveDate', { unique: false });
+                        // Criar novo índice para status
+                        if (!transactionStore.indexNames.contains('status')) {
+                            transactionStore.createIndex('status', 'status', { unique: false });
                         }
                         
-                        // Atualizar transações existentes
+                        // Atualizar transações existentes para ter status 'completed'
                         const getAllRequest = transactionStore.getAll();
                         getAllRequest.onsuccess = function() {
                             const allTransactions = getAllRequest.result;
                             allTransactions.forEach(transaction => {
-                                if (transaction.effectiveDate === undefined && transaction.status === 'completed') {
-                                    // Se já estava efetivada, usar a data da transação como data de efetivação
-                                    transaction.effectiveDate = transaction.date;
-                                    transactionStore.put(transaction);
-                                } else if (transaction.effectiveDate === undefined) {
-                                    // Se está pendente, deixar sem data de efetivação
-                                    transaction.effectiveDate = null;
+                                if (transaction.status === undefined) {
+                                    transaction.status = 'completed';
                                     transactionStore.put(transaction);
                                 }
                             });
@@ -1734,15 +1439,10 @@
                 // Carregar transações
                 transactions = await getAllFromStore(STORES.TRANSACTIONS);
                 
-                // Garantir que todas as transações tenham status e effectiveDate
+                // Garantir que todas as transações tenham status
                 transactions.forEach(transaction => {
                     if (transaction.status === undefined) {
                         transaction.status = 'completed';
-                    }
-                    if (transaction.effectiveDate === undefined && transaction.status === 'completed') {
-                        transaction.effectiveDate = transaction.date;
-                    } else if (transaction.effectiveDate === undefined) {
-                        transaction.effectiveDate = null;
                     }
                 });
                 
@@ -1910,7 +1610,6 @@
         }
 
         function formatDate(dateString) {
-            if (!dateString) return 'Não definida';
             const date = new Date(dateString);
             return date.toLocaleDateString('pt-BR');
         }
@@ -2239,7 +1938,7 @@
             document.getElementById('completion-rate').className = `status-summary-value ${completionRate === 100 ? 'text-success' : completionRate >= 70 ? 'text-warning' : 'text-danger'}`;
         }
 
-        // Renderizar transações (COM SELEÇÃO)
+        // Renderizar transações
         function renderTransactions(transactionsToRender, containerId, limit = null) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -2261,12 +1960,9 @@
                     const statusBadge = isCompleted ? 
                         '<span class="status-badge status-completed"><i class="bi bi-check-circle me-1"></i>Efetivada</span>' :
                         '<span class="status-badge status-pending"><i class="bi bi-clock me-1"></i>Pendente</span>';
-                    const effectiveDateBadge = isCompleted && transaction.effectiveDate ? 
-                        `<span class="effective-date-badge"><i class="bi bi-calendar-event me-1"></i>Efetivada em: ${formatDate(transaction.effectiveDate)}</span>` : '';
                     
                     html += `
                         <div class="transaction-item ${typeClass} ${statusClass}" data-id="${transaction.id}">
-                            <div class="transaction-checkbox"></div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center">
                                     <div class="category-icon me-3" style="background-color: ${categoryColor}20; color: ${categoryColor};">
@@ -2274,17 +1970,27 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-1">${transaction.description}</h6>
-                                        <div class="d-flex align-items-center flex-wrap">
+                                        <div class="d-flex align-items-center">
                                             <span class="category-badge me-2" style="background-color: ${categoryColor}30; color: ${categoryColor}; border: 1px solid ${categoryColor}50;">${transaction.category}</span>
                                             <small class="text-muted">${formatDate(transaction.date)}</small>
                                             ${statusBadge}
-                                            ${effectiveDateBadge}
                                             ${transaction.recurring ? '<span class="recurring-badge ms-2"><i class="bi bi-arrow-repeat me-1"></i>Recorrente</span>' : ''}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="text-end">
                                     <div class="amount">${isIncome ? '+' : '-'} ${formatCurrency(transaction.amount)}</div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-outline-secondary btn-action toggle-status" data-id="${transaction.id}" title="${isCompleted ? 'Marcar como pendente' : 'Marcar como efetivada'}">
+                                            <i class="bi ${isCompleted ? 'bi-arrow-counterclockwise' : 'bi-check-circle'}"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary btn-action edit-transaction" data-id="${transaction.id}" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger btn-action delete-transaction" data-id="${transaction.id}" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             ${transaction.notes ? `<small class="text-muted mt-2 d-block"><i>${transaction.notes}</i></small>` : ''}
@@ -2295,11 +2001,32 @@
             
             container.innerHTML = html;
             
-            // Adicionar eventos de clique para seleção
-            container.querySelectorAll('.transaction-item').forEach(item => {
-                item.addEventListener('click', function(e) {
+            // Adicionar eventos aos botões
+            container.querySelectorAll('.toggle-status').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     const transactionId = parseInt(this.getAttribute('data-id'));
-                    toggleTransactionSelection(transactionId, this);
+                    toggleTransactionStatus(transactionId);
+                });
+            });
+            
+            container.querySelectorAll('.edit-transaction').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const transactionId = parseInt(this.getAttribute('data-id'));
+                    editTransaction(transactionId);
+                });
+            });
+            
+            container.querySelectorAll('.delete-transaction').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    currentTransactionId = parseInt(this.getAttribute('data-id'));
+                    showConfirmation(
+                        'Excluir Transação',
+                        'Tem certeza que deseja excluir esta transação?',
+                        deleteTransaction
+                    );
                 });
             });
         }
@@ -2645,30 +2372,6 @@
 
         // ============= CRUD OPERATIONS =============
 
-        // Mostrar modal para efetivar transação
-        function showCompleteTransactionModal(transactionId) {
-            const transaction = transactions.find(t => t.id === transactionId);
-            if (!transaction) return;
-            
-            // Preencher informações da transação
-            document.getElementById('complete-transaction-id').value = transaction.id;
-            document.getElementById('complete-transaction-description').textContent = transaction.description;
-            document.getElementById('complete-transaction-amount').textContent = formatCurrency(transaction.amount);
-            document.getElementById('complete-transaction-category').textContent = transaction.category;
-            document.getElementById('complete-transaction-original-date').textContent = formatDate(transaction.date);
-            
-            // Configurar data padrão (hoje)
-            const today = new Date();
-            document.getElementById('complete-transaction-effective-date').valueAsDate = today;
-            
-            // Limpar campo de observações
-            document.getElementById('complete-transaction-notes').value = '';
-            
-            // Abrir modal
-            const modal = new bootstrap.Modal(document.getElementById('completeTransactionModal'));
-            modal.show();
-        }
-
         // Adicionar transação
         async function addTransaction(transactionData) {
             const {
@@ -2677,7 +2380,6 @@
                 amount,
                 category,
                 date,
-                effectiveDate,
                 notes,
                 recurring,
                 frequency,
@@ -2690,7 +2392,6 @@
                 
                 const newTransactions = [];
                 const statusValue = status ? 'completed' : 'pending';
-                const effectiveDateValue = status && effectiveDate ? effectiveDate : (status ? date : null);
                 
                 // Verificar se é uma transação recorrente
                 if (recurring && times > 1) {
@@ -2704,7 +2405,6 @@
                             amount,
                             category,
                             date: transactionDate.toISOString().split('T')[0],
-                            effectiveDate: statusValue === 'completed' ? (effectiveDateValue || transactionDate.toISOString().split('T')[0]) : null,
                             notes: notes || '',
                             recurring: true,
                             status: statusValue,
@@ -2735,7 +2435,6 @@
                         amount,
                         category,
                         date,
-                        effectiveDate: statusValue === 'completed' ? (effectiveDateValue || date) : null,
                         notes: notes || '',
                         recurring: recurring || false,
                         status: statusValue,
@@ -2772,9 +2471,6 @@
                 renderBudgets();
                 renderUpcomingBills();
                 
-                // Limpar seleções
-                clearSelections();
-                
                 // Fechar modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('addTransactionModal'));
                 if (modal) modal.hide();
@@ -2782,7 +2478,6 @@
                 // Resetar formulário
                 document.getElementById('transaction-form').reset();
                 document.getElementById('transaction-date').valueAsDate = new Date();
-                document.getElementById('transaction-effective-date').valueAsDate = new Date();
                 document.getElementById('type-income').checked = true;
                 document.getElementById('transaction-recurring').checked = false;
                 document.getElementById('transaction-status').checked = true;
@@ -2802,120 +2497,12 @@
             }
         }
 
-        // Efetivar transação (individual)
-        async function completeTransaction(transactionData) {
-            const { id, effectiveDate, notes } = transactionData;
-            
+        // Alternar status da transação
+        async function toggleTransactionStatus(transactionId) {
             try {
                 showLoading(true);
                 
-                const transactionIndex = transactions.findIndex(t => t.id === id);
-                if (transactionIndex === -1) {
-                    showNotification('Erro', 'Transação não encontrada.', 'danger');
-                    return;
-                }
-                
-                const transaction = transactions[transactionIndex];
-                
-                // Atualizar transação
-                const updatedTransaction = {
-                    ...transaction,
-                    status: 'completed',
-                    effectiveDate: effectiveDate,
-                    notes: transaction.notes ? `${transaction.notes}\n[Efetivada em ${formatDate(effectiveDate)}]: ${notes || 'Efetivada'}` : `[Efetivada em ${formatDate(effectiveDate)}]: ${notes || 'Efetivada'}`
-                };
-                
-                // Atualizar no IndexedDB
-                await updateInStore(STORES.TRANSACTIONS, updatedTransaction);
-                
-                // Atualizar dados em memória
-                transactions[transactionIndex] = updatedTransaction;
-                
-                // Atualizar a interface
-                updateDashboard();
-                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
-                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString(), 'all'), 'all-transactions-list');
-                updateStatusSummary();
-                renderExpenseCategories();
-                renderBudgets();
-                
-                // Limpar seleções
-                clearSelections();
-                
-                // Fechar modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('completeTransactionModal'));
-                if (modal) modal.hide();
-                
-                showNotification('Sucesso', 'Transação efetivada com sucesso!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao efetivar transação:', error);
-                showNotification('Erro', 'Não foi possível efetivar a transação. Por favor, tente novamente.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Efetivar transações selecionadas
-        async function completeSelectedTransactions() {
-            if (selectedTransactions.size === 0) {
-                showNotification('Atenção', 'Nenhuma transação selecionada.', 'warning');
-                return;
-            }
-            
-            try {
-                showLoading(true);
-                
-                let completedCount = 0;
-                
-                for (const transactionId of selectedTransactions) {
-                    const transactionIndex = transactions.findIndex(t => t.id === transactionId);
-                    if (transactionIndex === -1) continue;
-                    
-                    const transaction = transactions[transactionIndex];
-                    
-                    // Atualizar transação
-                    const updatedTransaction = {
-                        ...transaction,
-                        status: 'completed',
-                        effectiveDate: new Date().toISOString().split('T')[0],
-                        notes: transaction.notes ? `${transaction.notes}\n[Efetivada em ${formatDate(new Date())}]: Efetivada em lote` : `[Efetivada em ${formatDate(new Date())}]: Efetivada em lote`
-                    };
-                    
-                    // Atualizar no IndexedDB
-                    await updateInStore(STORES.TRANSACTIONS, updatedTransaction);
-                    
-                    // Atualizar dados em memória
-                    transactions[transactionIndex] = updatedTransaction;
-                    completedCount++;
-                }
-                
-                // Atualizar a interface
-                updateDashboard();
-                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
-                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString(), 'all'), 'all-transactions-list');
-                updateStatusSummary();
-                renderExpenseCategories();
-                renderBudgets();
-                
-                // Limpar seleções
-                clearSelections();
-                
-                showNotification('Sucesso', `${completedCount} transação(ões) efetivada(s) com sucesso!`, 'success');
-                
-            } catch (error) {
-                console.error('Erro ao efetivar transações:', error);
-                showNotification('Erro', 'Não foi possível efetivar as transações. Por favor, tente novamente.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Marcar transação como pendente (individual)
-        async function markTransactionAsPending(transactionId) {
-            try {
-                showLoading(true);
-                
+                // Encontrar transação
                 const transactionIndex = transactions.findIndex(t => t.id === transactionId);
                 if (transactionIndex === -1) {
                     showNotification('Erro', 'Transação não encontrada.', 'danger');
@@ -2923,12 +2510,12 @@
                 }
                 
                 const transaction = transactions[transactionIndex];
+                const newStatus = transaction.status === 'completed' ? 'pending' : 'completed';
                 
                 // Atualizar transação
                 const updatedTransaction = {
                     ...transaction,
-                    status: 'pending',
-                    effectiveDate: null
+                    status: newStatus
                 };
                 
                 // Atualizar no IndexedDB
@@ -2945,74 +2532,17 @@
                 renderExpenseCategories();
                 renderBudgets();
                 
-                // Limpar seleções
-                clearSelections();
-                
-                showNotification('Sucesso', 'Transação marcada como pendente!', 'success');
+                showNotification('Sucesso', `Transação marcada como ${newStatus === 'completed' ? 'efetivada' : 'pendente'}!`, 'success');
                 
             } catch (error) {
-                console.error('Erro ao marcar transação como pendente:', error);
+                console.error('Erro ao alternar status da transação:', error);
                 showNotification('Erro', 'Não foi possível alterar o status da transação. Por favor, tente novamente.', 'danger');
             } finally {
                 showLoading(false);
             }
         }
 
-        // Marcar transações selecionadas como pendentes
-        async function markSelectedTransactionsAsPending() {
-            if (selectedTransactions.size === 0) {
-                showNotification('Atenção', 'Nenhuma transação selecionada.', 'warning');
-                return;
-            }
-            
-            try {
-                showLoading(true);
-                
-                let updatedCount = 0;
-                
-                for (const transactionId of selectedTransactions) {
-                    const transactionIndex = transactions.findIndex(t => t.id === transactionId);
-                    if (transactionIndex === -1) continue;
-                    
-                    const transaction = transactions[transactionIndex];
-                    
-                    // Atualizar transação
-                    const updatedTransaction = {
-                        ...transaction,
-                        status: 'pending',
-                        effectiveDate: null
-                    };
-                    
-                    // Atualizar no IndexedDB
-                    await updateInStore(STORES.TRANSACTIONS, updatedTransaction);
-                    
-                    // Atualizar dados em memória
-                    transactions[transactionIndex] = updatedTransaction;
-                    updatedCount++;
-                }
-                
-                // Atualizar a interface
-                updateDashboard();
-                renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
-                renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString(), 'all'), 'all-transactions-list');
-                updateStatusSummary();
-                renderExpenseCategories();
-                renderBudgets();
-                
-                // Limpar seleções
-                clearSelections();
-                
-                showNotification('Sucesso', `${updatedCount} transação(ões) marcada(s) como pendente(s)!`, 'success');
-                
-            } catch (error) {
-                console.error('Erro ao marcar transações como pendentes:', error);
-                showNotification('Erro', 'Não foi possível alterar o status das transações. Por favor, tente novamente.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Editar transação (individual)
+        // Editar transação
         function editTransaction(transactionId) {
             const transaction = transactions.find(t => t.id === transactionId);
             if (!transaction) return;
@@ -3023,7 +2553,6 @@
             document.getElementById('edit-transaction-amount').value = transaction.amount;
             document.getElementById('edit-transaction-category').value = transaction.category;
             document.getElementById('edit-transaction-date').value = transaction.date;
-            document.getElementById('edit-transaction-effective-date').value = transaction.effectiveDate || '';
             document.getElementById('edit-transaction-notes').value = transaction.notes || '';
             document.getElementById('edit-transaction-status').checked = transaction.status === 'completed';
             
@@ -3038,22 +2567,9 @@
             modal.show();
         }
 
-        // Editar transações selecionadas (em lote)
-        async function editSelectedTransactions() {
-            if (selectedTransactions.size === 0) {
-                showNotification('Atenção', 'Nenhuma transação selecionada.', 'warning');
-                return;
-            }
-            
-            // Para edição em lote, vamos abrir um modal para editar a primeira transação
-            // Em uma implementação mais completa, você poderia criar um modal de edição em lote
-            const firstTransactionId = Array.from(selectedTransactions)[0];
-            editTransaction(firstTransactionId);
-        }
-
         // Salvar edição de transação
         async function saveTransactionEdit(transactionData) {
-            const { id, type, description, amount, category, date, effectiveDate, notes, status } = transactionData;
+            const { id, type, description, amount, category, date, notes, status } = transactionData;
             
             try {
                 showLoading(true);
@@ -3065,8 +2581,6 @@
                 }
                 
                 const statusValue = status ? 'completed' : 'pending';
-                const effectiveDateValue = status && effectiveDate ? effectiveDate : (status ? date : null);
-                
                 const updatedTransaction = {
                     ...transactions[transactionIndex],
                     type,
@@ -3074,7 +2588,6 @@
                     amount,
                     category,
                     date,
-                    effectiveDate: effectiveDateValue,
                     notes: notes || '',
                     status: statusValue
                 };
@@ -3094,9 +2607,6 @@
                 renderBudgets();
                 renderUpcomingBills();
                 
-                // Limpar seleções
-                clearSelections();
-                
                 // Fechar modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('editTransactionModal'));
                 if (modal) modal.hide();
@@ -3111,7 +2621,7 @@
             }
         }
 
-        // Excluir transação (individual)
+        // Excluir transação
         async function deleteTransaction() {
             const transactionId = currentTransactionId;
             
@@ -3140,9 +2650,6 @@
                 renderBudgets();
                 renderUpcomingBills();
                 
-                // Limpar seleções
-                clearSelections();
-                
                 showNotification('Sucesso', 'Transação excluída com sucesso!', 'success');
                 
             } catch (error) {
@@ -3151,59 +2658,6 @@
             } finally {
                 showLoading(false);
             }
-        }
-
-        // Excluir transações selecionadas
-        async function deleteSelectedTransactions() {
-            if (selectedTransactions.size === 0) {
-                showNotification('Atenção', 'Nenhuma transação selecionada.', 'warning');
-                return;
-            }
-            
-            showConfirmation(
-                'Excluir Transações',
-                `Tem certeza que deseja excluir ${selectedTransactions.size} transação(ões) selecionada(s)?`,
-                async function() {
-                    try {
-                        showLoading(true);
-                        
-                        let deletedCount = 0;
-                        
-                        for (const transactionId of selectedTransactions) {
-                            // Encontrar transação
-                            const transaction = transactions.find(t => t.id === transactionId);
-                            if (!transaction) continue;
-                            
-                            // Remover do IndexedDB
-                            await removeFromStore(STORES.TRANSACTIONS, transactionId);
-                            deletedCount++;
-                        }
-                        
-                        // Atualizar dados em memória
-                        await loadAllData();
-                        
-                        // Atualizar a interface
-                        updateDashboard();
-                        renderTransactions(filterTransactionsByMonth('all'), 'transactions-list', 5);
-                        renderTransactions(filterAllTransactions('all', '', '', currentSelectedMonth.toString(), 'all'), 'all-transactions-list');
-                        updateStatusSummary();
-                        renderExpenseCategories();
-                        renderBudgets();
-                        renderUpcomingBills();
-                        
-                        // Limpar seleções
-                        clearSelections();
-                        
-                        showNotification('Sucesso', `${deletedCount} transação(ões) excluída(s) com sucesso!`, 'success');
-                        
-                    } catch (error) {
-                        console.error('Erro ao excluir transações:', error);
-                        showNotification('Erro', 'Não foi possível excluir as transações. Por favor, tente novamente.', 'danger');
-                    } finally {
-                        showLoading(false);
-                    }
-                }
-            );
         }
 
         // Adicionar orçamento
@@ -3508,7 +2962,7 @@
                 // Agrupar despesas por categoria do mês do relatório (apenas efetivadas)
                 const categoryTotals = {};
                 transactions.forEach(transaction => {
-                    const transactionDate = new Date(transaction.effectiveDate || transaction.date);
+                    const transactionDate = new Date(transaction.date);
                     if (transaction.type === 'expense' && 
                         transaction.status === 'completed' &&
                         transactionDate.getMonth() === reportMonth && 
@@ -3534,7 +2988,7 @@
                 let monthlyExpense = 0;
                 
                 transactions.forEach(transaction => {
-                    const transactionDate = new Date(transaction.effectiveDate || transaction.date);
+                    const transactionDate = new Date(transaction.date);
                     if (transaction.status === 'completed' &&
                         transactionDate.getMonth() === reportMonth && 
                         transactionDate.getFullYear() === reportYear) {
@@ -3589,9 +3043,9 @@
                     const monthName = monthDate.toLocaleDateString('pt-BR', { month: 'short' });
                     months.push(monthName.charAt(0).toUpperCase() + monthName.slice(1));
                     
-                    // Calcular receitas do mês (pela data de efetivação)
+                    // Calcular receitas do mês
                     const monthIncome = transactions.reduce((sum, transaction) => {
-                        const transDate = new Date(transaction.effectiveDate || transaction.date);
+                        const transDate = new Date(transaction.date);
                         if (transaction.type === 'income' && 
                             transaction.status === 'completed' &&
                             transDate.getMonth() === monthDate.getMonth() && 
@@ -3746,7 +3200,7 @@
                 // Calcular gastos do mês do relatório para esta categoria (apenas efetivadas)
                 const spentThisMonth = transactions
                     .filter(t => {
-                        const transactionDate = new Date(t.effectiveDate || t.date);
+                        const transactionDate = new Date(t.date);
                         return t.type === 'expense' && 
                                t.status === 'completed' &&
                                t.category === budget.category &&
@@ -3843,9 +3297,6 @@
                 }
             });
             
-            // Limpar seleções quando mudar de seção
-            clearSelections();
-            
             // Atualizar a seção com os dados do mês selecionado
             if (sectionId === 'dashboard') {
                 updateDashboard();
@@ -3873,12 +3324,6 @@
                 if (!dataLoaded) {
                     showNotification('Erro', 'Não foi possível carregar os dados. Algumas funcionalidades podem não estar disponíveis.', 'danger');
                 }
-                
-                // Configurar eventos da barra de seleção
-                completeSelectedBtn.addEventListener('click', completeSelectedTransactions);
-                markPendingSelectedBtn.addEventListener('click', markSelectedTransactionsAsPending);
-                editSelectedBtn.addEventListener('click', editSelectedTransactions);
-                deleteSelectedBtn.addEventListener('click', deleteSelectedTransactions);
                 
                 // Configurar eventos de navegação no rodapé
                 document.querySelectorAll('.bottom-nav .nav-link').forEach(link => {
@@ -3917,18 +3362,6 @@
                     recurringOptions.style.display = this.checked ? 'block' : 'none';
                 });
                 
-                // Evento para campo de status na adição de transação
-                document.getElementById('transaction-status').addEventListener('change', function() {
-                    const effectiveDateContainer = document.getElementById('effective-date-container');
-                    effectiveDateContainer.style.display = this.checked ? 'block' : 'none';
-                });
-                
-                // Evento para campo de status na edição de transação
-                document.getElementById('edit-transaction-status').addEventListener('change', function() {
-                    const effectiveDateContainer = document.getElementById('edit-effective-date-container');
-                    effectiveDateContainer.style.display = this.checked ? 'block' : 'none';
-                });
-                
                 // Evento para o formulário de transação
                 document.getElementById('transaction-form').addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -3938,7 +3371,6 @@
                     const amount = parseFloat(document.getElementById('transaction-amount').value);
                     const category = document.getElementById('transaction-category').value;
                     const date = document.getElementById('transaction-date').value;
-                    const effectiveDate = document.getElementById('transaction-effective-date').value;
                     const notes = document.getElementById('transaction-notes').value;
                     const recurring = document.getElementById('transaction-recurring').checked;
                     const frequency = recurring ? parseInt(document.getElementById('recurring-frequency').value) : 1;
@@ -3956,7 +3388,6 @@
                         amount,
                         category,
                         date,
-                        effectiveDate,
                         notes,
                         recurring,
                         frequency,
@@ -3975,7 +3406,6 @@
                     const amount = parseFloat(document.getElementById('edit-transaction-amount').value);
                     const category = document.getElementById('edit-transaction-category').value;
                     const date = document.getElementById('edit-transaction-date').value;
-                    const effectiveDate = document.getElementById('edit-transaction-effective-date').value;
                     const notes = document.getElementById('edit-transaction-notes').value;
                     const status = document.getElementById('edit-transaction-status').checked;
                     
@@ -3991,29 +3421,8 @@
                         amount,
                         category,
                         date,
-                        effectiveDate,
                         notes,
                         status
-                    });
-                });
-                
-                // Evento para o formulário de efetivação de transação
-                document.getElementById('complete-transaction-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const id = parseInt(document.getElementById('complete-transaction-id').value);
-                    const effectiveDate = document.getElementById('complete-transaction-effective-date').value;
-                    const notes = document.getElementById('complete-transaction-notes').value;
-                    
-                    if (!effectiveDate) {
-                        showNotification('Atenção', 'Por favor, informe a data da efetivação.', 'warning');
-                        return;
-                    }
-                    
-                    completeTransaction({
-                        id,
-                        effectiveDate,
-                        notes
                     });
                 });
                 
@@ -4104,9 +3513,6 @@
                         const filtered = filterTransactionsByMonth(filter);
                         renderTransactions(filtered, 'transactions-list', 5);
                         
-                        // Limpar seleções quando filtrar
-                        clearSelections();
-                        
                         // Ativar badge selecionado
                         document.querySelectorAll('.filter-badge').forEach(b => {
                             b.classList.remove('bg-primary', 'text-white');
@@ -4126,9 +3532,6 @@
                     const statusFilter = document.getElementById('filter-status').value;
                     const filtered = filterAllTransactions('all', search, category, monthFilter, statusFilter);
                     renderTransactions(filtered, 'all-transactions-list');
-                    
-                    // Limpar seleções quando buscar
-                    clearSelections();
                 });
                 
                 // Evento para filtro de categoria na seção de transações
@@ -4139,9 +3542,6 @@
                     const statusFilter = document.getElementById('filter-status').value;
                     const filtered = filterAllTransactions('all', search, category, monthFilter, statusFilter);
                     renderTransactions(filtered, 'all-transactions-list');
-                    
-                    // Limpar seleções quando filtrar
-                    clearSelections();
                 });
                 
                 // Evento para filtro de mês na seção de transações
@@ -4152,9 +3552,6 @@
                     const statusFilter = document.getElementById('filter-status').value;
                     const filtered = filterAllTransactions('all', search, category, monthFilter, statusFilter);
                     renderTransactions(filtered, 'all-transactions-list');
-                    
-                    // Limpar seleções quando filtrar
-                    clearSelections();
                 });
                 
                 // Evento para filtro de status na seção de transações
@@ -4165,9 +3562,6 @@
                     const monthFilter = document.getElementById('filter-month').value;
                     const filtered = filterAllTransactions('all', search, category, monthFilter, statusFilter);
                     renderTransactions(filtered, 'all-transactions-list');
-                    
-                    // Limpar seleções quando filtrar
-                    clearSelections();
                 });
                 
                 // Evento para gerar relatório
@@ -4202,11 +3596,6 @@
                 renderUpcomingBills();
                 renderBudgets();
                 renderCategoryLists();
-                
-                // Configurar data de efetivação inicialmente visível se status estiver marcado
-                const statusCheckbox = document.getElementById('transaction-status');
-                const effectiveDateContainer = document.getElementById('effective-date-container');
-                effectiveDateContainer.style.display = statusCheckbox.checked ? 'block' : 'none';
                 
                 // Mostrar seção inicial
                 showSection('dashboard');
