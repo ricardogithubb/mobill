@@ -2258,9 +2258,10 @@
                     const typeClass = isIncome ? 'transaction-income' : 'transaction-expense';
                     const statusClass = isCompleted ? 'completed' : 'pending';
                     const categoryColor = categoryObj ? categoryObj.color : (isIncome ? '#4cc9f0' : '#f72585');
-                    const statusBadge = isCompleted ? 
-                        '<span class="status-badge status-completed"><i class="bi bi-check-circle me-1"></i>Efetivada</span>' :
-                        '<span class="status-badge status-pending"><i class="bi bi-clock me-1"></i>Pendente</span>';
+                    const statusBadge = '';
+                //    const statusBadge = isCompleted ? 
+                //        '<span class="status-badge status-completed"><i class="bi bi-check-circle me-1"></i>Efetivada</span>' :
+                //        '<span class="status-badge status-pending"><i class="bi bi-clock me-1"></i>Pendente</span>';
                     const effectiveDateBadge = isCompleted && transaction.effectiveDate ? 
                         `<span class="effective-date-badge"><i class="bi bi-calendar-event me-1"></i>Efetivada em: ${formatDate(transaction.effectiveDate)}</span>` : '';
                     
@@ -2278,8 +2279,7 @@
                                             <span class="category-badge me-2" style="background-color: ${categoryColor}30; color: ${categoryColor}; border: 1px solid ${categoryColor}50;">${transaction.category}</span>
                                             <small class="text-muted">${formatDate(transaction.date)}</small>
                                             ${statusBadge}
-                                            ${effectiveDateBadge}
-                                            ${transaction.recurring ? '<span class="recurring-badge ms-2"><i class="bi bi-arrow-repeat me-1"></i>Recorrente</span>' : ''}
+                                            ${effectiveDateBadge}                                            
                                         </div>
                                     </div>
                                 </div>
